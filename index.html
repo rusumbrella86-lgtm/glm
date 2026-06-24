@@ -5,57 +5,157 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find GLM</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
         body {
             margin: 0;
-            padding: 40px 20px;
-            background-color: #f5f5f5;
-            font-family: Arial, Helvetica, sans-serif;
+            padding: 60px 20px;
+            background-color: #0a0a0a;
+            background-image: 
+                radial-gradient(circle at 25% 30%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 70%, rgba(0, 255, 136, 0.02) 0%, transparent 50%);
+            font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
             text-align: center;
+            color: #e0e0e0;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
         h1 {
-            font-size: 4em;
-            color: #00aa55;
-            margin-bottom: 10px;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 5em;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 8px;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 136, 0.6),
+                0 4px 10px rgba(0, 0, 0, 0.5);
+            letter-spacing: -2px;
         }
-        p {
-            font-size: 1.8em;
-            color: #333;
+        
+        .subtitle {
+            font-size: 1.35em;
+            color: #aaaaaa;
+            margin-bottom: 50px;
+            font-weight: 400;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+        }
+        
+        .images-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
             margin-bottom: 40px;
         }
+        
+        .image-wrapper {
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .image-wrapper:hover {
+            transform: translateY(-8px);
+        }
+        
         .click-image {
-            max-width: 85%;
+            max-width: 420px;
+            width: 100%;
             height: auto;
-            border: 8px solid #00aa55;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 6px solid #00ff88;
+            border-radius: 16px;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(0, 255, 136, 0.1) inset;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: block;
         }
+        
         .click-image:hover {
-            transform: scale(1.02);
+            border-color: #00ffaa;
+            box-shadow: 
+                0 35px 80px rgba(0, 0, 0, 0.7),
+                0 0 30px rgba(0, 255, 136, 0.25);
+            transform: scale(1.015);
         }
+        
+        .channel-label {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #111;
+            color: #00ff88;
+            font-size: 0.85em;
+            font-weight: 600;
+            padding: 4px 18px;
+            border-radius: 20px;
+            border: 1px solid #00ff88;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            letter-spacing: 0.5px;
+        }
+        
         .footer {
-            margin-top: 60px;
-            font-size: 1em;
-            color: #888;
+            margin-top: 70px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        
+        .footer p {
+            margin: 0;
+        }
+        
+        @media (max-width: 900px) {
+            h1 {
+                font-size: 3.5em;
+            }
+            .click-image {
+                max-width: 320px;
+            }
+            .images-container {
+                gap: 30px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <h1>Find GLM</h1>
-    <p>Click the picture below to go straight to her latest YouTube videos!</p>
+    <div class="container">
+        <h1>Find GLM</h1>
+        <p class="subtitle">Click the pictures below to go straight to the latest YouTube videos.</p>
 
-    <a href="https://www.youtube.com/@GLM2026" target="_blank">
-        <img src="image-20.jpg" alt="Click here to watch GLM on YouTube" class="click-image">
-    </a>
+        <div class="images-container">
+            
+            <div class="image-wrapper">
+                <a href="https://www.youtube.com/@GLM2026" target="_blank">
+                    <img src="image-20.jpg" alt="Click here to watch GLM on YouTube" class="click-image">
+                </a>
+                <div class="channel-label">GLM 2026</div>
+            </div>
+            
+            <div class="image-wrapper">
+                <a href="https://www.youtube.com/@420Flexaronnie" target="_blank">
+                    <img src="32.jpg" alt="Click here to watch Flex on YouTube" class="click-image">
+                </a>
+                <div class="channel-label">420Flexaronnie</div>
+            </div>
+            
+        </div>
 
-    <a href="https://www.youtube.com/@420Flexaronnie" target="_blank">
-        <img src="32.jpg" alt="Click here to watch GLM on YouTube" class="click-image">
-    </a>
-
-    <div class="footer">
-        <p>🖕😎🖕</p>
+        <div class="footer">
+            <p>🖕😎🖕</p>
+        </div>
     </div>
 
 </body>
