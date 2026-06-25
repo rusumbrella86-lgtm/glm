@@ -41,12 +41,21 @@
         .subtitle {
             font-size: 1.35em;
             color: #aaaaaa;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             font-weight: 400;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             line-height: 1.4;
+        }
+        
+        #visitor-counter {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4em;
+            color: #00ff88;
+            margin-bottom: 40px;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+            letter-spacing: 1px;
         }
         
         .images-container {
@@ -134,6 +143,8 @@
     <div class="container">
         <h1>Find GLM</h1>
         <p class="subtitle">Click the pictures below to go straight to the YouTube Channel.</p>
+        
+        <div id="visitor-counter">VISITORS: <span id="count">0</span></div>
 
         <div class="images-container">
             
@@ -157,6 +168,15 @@
             <p>🖕😎🖕</p>
         </div>
     </div>
+
+    <script>
+        // Simple persistent visitor counter (localStorage)
+        let count = localStorage.getItem('glmVisitorCount') || 1337; // starting number for that flex energy
+        count = parseInt(count) + 1;
+        localStorage.setItem('glmVisitorCount', count);
+        
+        document.getElementById('count').textContent = count.toLocaleString();
+    </script>
 
 </body>
 </html>
