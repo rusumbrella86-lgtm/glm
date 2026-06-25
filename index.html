@@ -11,19 +11,29 @@
             margin: 0;
             padding: 60px 20px;
             background-color: #0a0a0a;
-            background-image: 
-                radial-gradient(circle at 25% 30%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 75% 70%, rgba(0, 255, 136, 0.02) 0%, transparent 50%);
             font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
             text-align: center;
             color: #e0e0e0;
             min-height: 100vh;
             box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        
+        canvas#matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.75;
         }
         
         .container {
             max-width: 1100px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         h1 {
@@ -130,182 +140,6 @@
             font-size: 1.15em;
         }
         
-        .promo-section {
-            margin-top: 60px;
-            padding: 0 20px;
-            max-width: 620px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .promo-section h2 {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-size: 2em;
-            color: #00ff88;
-            margin-bottom: 12px;
-            text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-        }
-        
-        .promo-section p {
-            color: #aaaaaa;
-            font-size: 1.05em;
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-        
-        #submit-form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            max-width: 520px;
-            margin: 0 auto;
-        }
-        
-        #submit-form input,
-        #submit-form textarea,
-        #submit-form button {
-            padding: 15px 20px;
-            border: 2px solid #00ff88;
-            border-radius: 14px;
-            background-color: #111111;
-            color: #e0e0e0;
-            font-size: 1.05em;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            box-sizing: border-box;
-        }
-        
-        #submit-form input:focus,
-        #submit-form textarea:focus {
-            border-color: #00ffaa;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
-            background-color: #1a1a1a;
-        }
-        
-        #submit-form textarea {
-            resize: vertical;
-            min-height: 90px;
-            line-height: 1.4;
-        }
-        
-        #submit-form button {
-            background: linear-gradient(135deg, #00ff88, #00cc6a);
-            color: #0a0a0a;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
-        }
-        
-        #submit-form button:hover {
-            background: linear-gradient(135deg, #00ffaa, #00ff88);
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 12px 35px rgba(0, 255, 136, 0.4);
-        }
-        
-        .promo-window {
-            margin-top: 55px;
-            max-width: 720px;
-            margin-left: auto;
-            margin-right: auto;
-            background-color: #0f0f0f;
-            border: 4px solid #00ff88;
-            border-radius: 20px;
-            padding: 30px 35px;
-            box-shadow: 
-                0 30px 70px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(0, 255, 136, 0.15) inset;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .promo-window::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #00ff88, transparent, #00ff88);
-            border-radius: 20px;
-            z-index: -1;
-            opacity: 0.12;
-            animation: promo-glow 5s ease-in-out infinite;
-        }
-        
-        @keyframes promo-glow {
-            0%, 100% { opacity: 0.08; }
-            50% { opacity: 0.22; }
-        }
-        
-        .promo-window h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.65em;
-            color: #00ff88;
-            margin: 0 0 22px 0;
-            text-align: center;
-            letter-spacing: 1px;
-            text-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
-        }
-        
-        #promoted-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        
-        .promo-item {
-            background-color: #1a1a1a;
-            border: 2px solid #00ff88;
-            border-radius: 12px;
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            text-align: left;
-        }
-        
-        .promo-item:hover {
-            border-color: #00ffaa;
-            background-color: #252525;
-            transform: translateX(8px);
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.15);
-        }
-        
-        .promo-item a {
-            color: #00ff88;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1em;
-            flex-shrink: 0;
-            transition: color 0.2s ease;
-        }
-        
-        .promo-item a:hover {
-            color: #00ffaa;
-            text-decoration: underline;
-        }
-        
-        .promo-item .tagline {
-            color: #bbbbbb;
-            font-size: 0.95em;
-            flex: 1;
-            text-align: right;
-            font-style: italic;
-            opacity: 0.9;
-        }
-        
-        .promo-window .footer-note {
-            text-align: center;
-            font-size: 0.82em;
-            color: #666;
-            margin-top: 25px;
-            letter-spacing: 0.5px;
-        }
-        
         @media (max-width: 900px) {
             h1 {
                 font-size: 3.5em;
@@ -316,23 +150,12 @@
             .images-container {
                 gap: 30px;
             }
-            .promo-window {
-                padding: 22px 20px;
-                max-width: 95%;
-            }
-            .promo-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-            .promo-item .tagline {
-                text-align: left;
-                margin-top: 4px;
-            }
         }
     </style>
 </head>
 <body>
+
+    <canvas id="matrix"></canvas>
 
     <div class="container">
         <h1>Find GLM</h1>
@@ -360,141 +183,52 @@
             <p>ðŸ–•ðŸ˜ŽðŸ–•</p>
             <div id="visitor-counter">VISITORS: <span id="count">0</span></div>
         </div>
-
-        <!-- SUBMISSION FORM -->
-        <div class="promo-section">
-            <h2>ðŸš€ Submit Your Channel for Promotion</h2>
-            <p>New users can drop their YouTube channel here and get featured in the live promo window below. Instant community exposure â€” submissions show up for everyone visiting!</p>
-            
-            <form id="submit-form">
-                <input type="text" id="channel-name" placeholder="Your Channel Name (e.g. Drama Slayer 420)" required>
-                <input type="url" id="channel-url" placeholder="Full YouTube Channel URL (https://www.youtube.com/@yourhandle)" required>
-                <textarea id="channel-desc" placeholder="Short tagline or vibe description (optional, e.g. 'Daily memes, exposÃ©s &amp; green light energy')"></textarea>
-                <button type="submit">SUBMIT FOR PROMO ðŸ”¥</button>
-            </form>
-        </div>
-
-        <!-- SMALL PROMO WINDOW AT BOTTOM -->
-        <div class="promo-window">
-            <h3>ðŸ”¥ PROMOTED CHANNELS</h3>
-            <div id="promoted-list">
-                <!-- Dynamically populated by JS from localStorage submissions -->
-            </div>
-            <p class="footer-note">Live community submissions â€¢ Appears at the bottom for all visitors â€¢ Powered by The Lounge</p>
-        </div>
-
     </div>
 
     <script>
+        // Matrix Rain Background
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?~ãƒã‚ªãƒžãƒˆãƒªãƒƒã‚¯ã‚¹'.split('');
+        const fontSize = 14;
+        let columns = Math.floor(width / fontSize);
+        let drops = new Array(columns).fill(1);
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.075)';
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.fillStyle = '#00ff88';
+            ctx.font = `${fontSize}px monospace`;
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
         // Simple persistent visitor counter (localStorage)
-        let count = localStorage.getItem('glmVisitorCount') || 1337; // starting number for that flex energy
+        let count = localStorage.getItem('glmVisitorCount') || 1337;
         count = parseInt(count) + 1;
         localStorage.setItem('glmVisitorCount', count);
         
         document.getElementById('count').textContent = count.toLocaleString();
-
-        // ========== PROMOTED CHANNELS SYSTEM ==========
-        let promotedChannels = JSON.parse(localStorage.getItem('promotedChannels') || '[]');
-
-        // Seed with defaults if first time (the core channels)
-        if (promotedChannels.length === 0) {
-            promotedChannels = [
-                { 
-                    name: "GLM 2026", 
-                    url: "https://www.youtube.com/@GLM2026", 
-                    tagline: "Green Light Movement â€¢ Original energy" 
-                },
-                { 
-                    name: "420Flexaronnie", 
-                    url: "https://www.youtube.com/@420Flexaronnie", 
-                    tagline: "Flex The Slothpig Slayer â€¢ Drama, memes &amp; raw truth" 
-                }
-            ];
-            localStorage.setItem('promotedChannels', JSON.stringify(promotedChannels));
-        }
-
-        function renderPromoted() {
-            const listContainer = document.getElementById('promoted-list');
-            if (!listContainer) return;
-            
-            listContainer.innerHTML = '';
-            
-            promotedChannels.forEach((channel) => {
-                const item = document.createElement('div');
-                item.className = 'promo-item';
-                
-                let html = `<a href="${channel.url}" target="_blank" rel="noopener">${channel.name}</a>`;
-                
-                if (channel.tagline && channel.tagline.trim() !== '') {
-                    html += `<span class="tagline">${channel.tagline}</span>`;
-                }
-                
-                item.innerHTML = html;
-                listContainer.appendChild(item);
-            });
-        }
-
-        // Initial render
-        renderPromoted();
-
-        // Form submission handler
-        const submitForm = document.getElementById('submit-form');
-        if (submitForm) {
-            submitForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('channel-name');
-                const urlInput = document.getElementById('channel-url');
-                const descInput = document.getElementById('channel-desc');
-                
-                const name = nameInput.value.trim();
-                const url = urlInput.value.trim();
-                const tagline = descInput.value.trim();
-                
-                if (!name || !url) {
-                    alert('Channel name and URL are required!');
-                    return;
-                }
-                
-                // Basic YouTube URL check
-                if (!url.toLowerCase().includes('youtube.com') && !url.toLowerCase().includes('youtu.be')) {
-                    alert('Please enter a valid YouTube channel URL!');
-                    return;
-                }
-                
-                // Add new submission to the front
-                promotedChannels.unshift({
-                    name: name,
-                    url: url,
-                    tagline: tagline
-                });
-                
-                // Cap at 12 entries (remove oldest from end)
-                if (promotedChannels.length > 12) {
-                    promotedChannels.pop();
-                }
-                
-                // Save to localStorage
-                localStorage.setItem('promotedChannels', JSON.stringify(promotedChannels));
-                
-                // Re-render the promo window
-                renderPromoted();
-                
-                // Clear the form
-                submitForm.reset();
-                
-                // Fun success feedback on button
-                const submitBtn = submitForm.querySelector('button');
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'SUBMITTED! ðŸ”¥ LIVE NOW';
-                submitBtn.style.background = 'linear-gradient(135deg, #00cc6a, #00ff88)';
-                
-                setTimeout(() => {
-                    submitBtn.textContent = originalText;
-                    submitBtn.style.background = 'linear-gradient(135deg, #00ff88, #00cc6a)';
-                }, 2200);
-            });
-        }
     </script>
 
 </body>
