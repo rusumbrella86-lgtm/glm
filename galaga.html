@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GALAGA '26 • GL on the Run</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0a0a0a;
+      color: #00ff9f;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    header {
+      text-align: center;
+      margin: 10px 0 2px;
+    }
+    
+    h1 {
+      font-size: 26px;
+      margin: 0;
+      color: #ffcc00;
+      text-shadow: 0 0 8px #ffaa00, 0 0 18px #ff6600;
+      letter-spacing: 3px;
+    }
+    
+    .subtitle {
+      font-size: 9px;
+      color: #555;
+    }
+    
+    .game-wrap {
+      position: relative;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    
+    canvas {
+      border: 4px solid #ffcc00;
+      background: #000;
+      box-shadow: 0 0 0 4px #111, 0 0 25px rgba(255, 170, 0, 0.35);
+      image-rendering: pixelated;
+    }
+    
+    .sidebar {
+      width: 150px;
+      font-size: 12px;
+    }
+    
+    .panel {
+      background: #111;
+      border: 3px solid #ffcc00;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+    }
+    
+    .panel h2 {
+      font-size: 10px;
+      margin: 0 0 5px;
+      color: #ffaa00;
+    }
+    
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      margin: 3px 0;
+    }
+    
+    .lives {
+      color: #ff8800;
+      font-size: 18px;
+      letter-spacing: 3px;
+    }
+    
+    .controls {
+      font-size: 9px;
+      line-height: 1.35;
+      background: #111;
+      border: 3px solid #ffcc00;
+      padding: 7px;
+    }
+    
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.82);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 10;
+    }
+    
+    .overlay.show {
+      display: flex;
+    }
+    
+    .overlay h2 {
+      color: #ffaa00;
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    
+    button {
+      font-family: 'Press Start 2P', monospace;
+      background: #111;
+      color: #ffcc00;
+      border: 3px solid #ffcc00;
+      padding: 6px 16px;
+      font-size: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    
+    button:hover {
+      background: #ffcc00;
+      color: #000;
+    }
+    
+    .footer {
+      margin-top: 8px;
+      font-size: 8px;
+      color: #333;
+    }
+    
+    .scanlines {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 3px,
+        rgba(255,255,255,0.025) 3px,
+        rgba(255,255,255,0.025) 4px
+      );
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GALAGA '26</h1>
+    <div class="subtitle">GL ON THE RUN • SURVIVE THE SWARM</div>
+  </header>
+
+  <div class="game-wrap" style="position:relative;">
+    <canvas id="game" width="420" height="560"></canvas>
+    
+    <div class="sidebar">
+      <div class="panel">
+        <h2>SCORE</h2>
+        <div id="score" style="font-size:20px; color:#ffcc00;">000000</div>
+      </div>
+      
+      <div class="panel">
+        <div class="stat"><span>WAVE</span> <span id="wave">01</span></div>
+        <div class="stat"><span>LIVES</span> <span id="lives" class="lives">★★★</span></div>
+      </div>
+      
+      <div class="panel">
+        <h2>CONTROLS</h2>
+        <div class="controls">
+          ← → : Move<br>
+          SPACE : Shoot<br>
+          P : Pause<br>
+          R : Restart<br><br>
+          <span style="color:#666">Old school only.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlays -->
+    <div id="pause-overlay" class="overlay">
+      <h2>PAUSED</h2>
+      <p style="font-size:10px; margin:0;">PRESS P TO RESUME</p>
+    </div>
+    
+    <div id="gameover-overlay" class="overlay">
+      <h2>GAME OVER</h2>
+      <div style="margin:6px 0 4px; font-size:10px;">FINAL SCORE</div>
+      <div id="final-score" style="font-size:22px; color:#ffcc00;"></div>
+      <div id="final-wave" style="font-size:9px; margin-top:2px;"></div>
+      <button onclick="restartGame()">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <div class="footer">Refresh to restart • glmontherun.com</div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    
+    const scoreEl = document.getElementById('score');
+    const waveEl = document.getElementById('wave');
+    const livesEl = document.getElementById('lives');
+    const pauseOverlay = document.getElementById('pause-overlay');
+    const gameOverOverlay = document.getElementById('gameover-overlay');
+    const finalScoreEl = document.getElementById('final-score');
+    const finalWaveEl = document.getElementById('final-wave');
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    let player = { x: W/2 - 12, y: H - 45, w: 24, h: 20 };
+    let bullets = [];
+    let enemies = [];
+    let enemyBullets = [];
+    let particles = [];
+    
+    let score = 0;
+    let wave = 1;
+    let lives = 3;
+    let gameRunning = true;
+    let paused = false;
+    let gameOver = false;
+    let lastShot = 0;
+    let lastEnemyMove = 0;
+    let lastEnemyShot = 0;
+    let enemyDir = 1; // 1 right, -1 left
+    let enemySpeed = 0.9;
+    let diveTimer = 0;
+
+    let keys = {};
+
+    function createStars() {
+      // Static starfield drawn every frame
+    }
+
+    function resetPlayer() {
+      player.x = W / 2 - 12;
+      player.y = H - 45;
+    }
+
+    function createEnemyFormation(waveNum) {
+      enemies = [];
+      const rows = Math.min(5, 2 + Math.floor(waveNum / 2));
+      const cols = 8;
+      const startY = 55;
+      
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const type = (r === 0) ? 'elite' : (r < 2 ? 'mid' : 'basic');
+          enemies.push({
+            x: 45 + c * 38,
+            y: startY + r * 32,
+            w: 22,
+            h: 18,
+            type: type,
+            alive: true,
+            dive: false,
+            diveY: 0,
+            originalX: 45 + c * 38,
+            originalY: startY + r * 32,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      }
+      enemySpeed = Math.min(2.6, 0.85 + waveNum * 0.22);
+    }
+
+    function drawPlayer() {
+      ctx.save();
+      ctx.fillStyle = '#00ccff';
+      // Simple retro ship
+      const px = player.x;
+      const py = player.y;
+      
+      // Body
+      ctx.fillRect(px + 4, py + 4, 16, 12);
+      // Wings
+      ctx.fillRect(px, py + 8, 24, 5);
+      // Nose
+      ctx.fillStyle = '#66ffff';
+      ctx.fillRect(px + 10, py, 4, 8);
+      // Cockpit
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(px + 10, py + 6, 4, 4);
+      
+      ctx.restore();
+    }
+
+    function drawEnemy(e) {
+      ctx.save();
+      const x = e.x;
+      const y = e.y;
+      
+      if (e.type === 'elite') {
+        ctx.fillStyle = '#ff4400';
+        ctx.fillRect(x + 3, y + 2, 16, 12);
+        ctx.fillStyle = '#ffaa00';
+        ctx.fillRect(x + 7, y + 4, 8, 6);
+      } else if (e.type === 'mid') {
+        ctx.fillStyle = '#ffcc00';
+        ctx.fillRect(x + 4, y + 3, 14, 10);
+        ctx.fillStyle = '#ff6600';
+        ctx.fillRect(x + 2, y + 5, 18, 4);
+      } else {
+        ctx.fillStyle = '#ff8800';
+        ctx.fillRect(x + 5, y + 4, 12, 9);
+        ctx.fillStyle = '#ffcc66';
+        ctx.fillRect(x + 8, y + 6, 6, 4);
+      }
+      
+      // Antennae / feelers
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + 7, y + 2);
+      ctx.lineTo(x + 5, y - 2);
+      ctx.moveTo(x + 15, y + 2);
+      ctx.lineTo(x + 17, y - 2);
+      ctx.stroke();
+      
+      ctx.restore();
+    }
+
+    function drawBullet(b) {
+      ctx.fillStyle = b.isEnemy ? '#ff6666' : '#00ffff';
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+      if (!b.isEnemy) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(b.x + 1, b.y, 2, 3);
+      }
+    }
+
+    function drawStars() {
+      ctx.fillStyle = '#222';
+      for (let i = 0; i < 42; i++) {
+        const sx = (i * 17 + 7) % W;
+        const sy = ((i * 31) % (H - 30)) + 10;
+        ctx.fillRect(sx, sy, 1, 1);
+      }
+      ctx.fillStyle = '#444';
+      for (let i = 0; i < 18; i++) {
+        const sx = (i * 23 + 13) % W;
+        const sy = ((i * 47) % (H - 50)) + 20;
+        ctx.fillRect(sx, sy, 2, 1);
+      }
+    }
+
+    function spawnParticle(x, y, color) {
+      for (let i = 0; i < 6; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 3.5,
+          vy: (Math.random() - 0.5) * 3.5 - 0.8,
+          life: 18 + Math.random() * 12,
+          color: color
+        });
+      }
+    }
+
+    function update() {
+      if (!gameRunning || paused || gameOver) return;
+
+      const now = Date.now();
+
+      // Player movement
+      if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= 3.4;
+      if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += 3.4;
+      player.x = Math.max(8, Math.min(W - player.w - 8, player.x));
+
+      // Shooting
+      if ((keys[' '] || keys['Space']) && now - lastShot > 145) {
+        bullets.push({ x: player.x + 10, y: player.y - 4, w: 4, h: 9 });
+        lastShot = now;
+        playBeep(1400, 22, 'sawtooth');
+      }
+
+      // Update player bullets
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].y -= 7.5;
+        if (bullets[i].y < 0) bullets.splice(i, 1);
+      }
+
+      // Enemy movement (formation)
+      if (now - lastEnemyMove > 42) {
+        let hitEdge = false;
+        
+        enemies.forEach(e => {
+          if (!e.alive) return;
+          if (!e.dive) {
+            e.x += enemyDir * enemySpeed;
+            if (e.x < 18 || e.x > W - 38) hitEdge = true;
+          }
+        });
+
+        if (hitEdge) {
+          enemyDir *= -1;
+          enemies.forEach(e => {
+            if (e.alive && !e.dive) e.y += 11;
+          });
+        }
+        lastEnemyMove = now;
+      }
+
+      // Occasional diving enemies (Galaga style)
+      diveTimer++;
+      if (diveTimer > 38) {
+        const alive = enemies.filter(e => e.alive && !e.dive);
+        if (alive.length > 0) {
+          const diver = alive[Math.floor(Math.random() * alive.length)];
+          diver.dive = true;
+          diver.diveY = diver.y;
+        }
+        diveTimer = 0;
+      }
+
+      // Update diving enemies
+      enemies.forEach(e => {
+        if (!e.alive || !e.dive) return;
+        e.y += 2.8;
+        e.x += Math.sin((Date.now() + e.phase * 400) / 220) * 1.8;
+        
+        // Return to formation if too low or dead
+        if (e.y > H - 80) {
+          e.dive = false;
+          e.y = e.originalY;
+          e.x = e.originalX;
+        }
+      });
+
+      // Enemy shooting
+      if (now - lastEnemyShot > 380 - Math.min(220, wave * 18)) {
+        const shooters = enemies.filter(e => e.alive);
+        if (shooters.length > 0) {
+          // Pick a shooter close to player x
+          shooters.sort((a,b) => Math.abs(a.x - player.x) - Math.abs(b.x - player.x));
+          const shooter = shooters[0];
+          
+          enemyBullets.push({
+            x: shooter.x + 9,
+            y: shooter.y + 14,
+            w: 3,
+            h: 7,
+            isEnemy: true
+          });
+          playBeep(320, 30, 'square');
+        }
+        lastEnemyShot = now;
+      }
+
+      // Update enemy bullets
+      for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        enemyBullets[i].y += 3.8;
+        if (enemyBullets[i].y > H) enemyBullets.splice(i, 1);
+      }
+
+      // Collisions: Player bullets vs Enemies
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        const b = bullets[i];
+        for (let j = 0; j < enemies.length; j++) {
+          const e = enemies[j];
+          if (!e.alive) continue;
+          
+          if (b.x < e.x + e.w && b.x + b.w > e.x &&
+              b.y < e.y + e.h && b.y + b.h > e.y) {
+            e.alive = false;
+            bullets.splice(i, 1);
+            score += (e.type === 'elite' ? 80 : e.type === 'mid' ? 50 : 30) * wave;
+            spawnParticle(e.x + 10, e.y + 8, '#ffaa00');
+            playBeep(680, 55, 'sawtooth');
+            break;
+          }
+        }
+      }
+
+      // Collisions: Enemy bullets vs Player
+      for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        const b = enemyBullets[i];
+        if (b.x < player.x + player.w && b.x + b.w > player.x &&
+            b.y < player.y + player.h && b.y + b.h > player.y) {
+          enemyBullets.splice(i, 1);
+          hitPlayer();
+        }
+      }
+
+      // Collisions: Enemy vs Player (ramming)
+      for (let j = 0; j < enemies.length; j++) {
+        const e = enemies[j];
+        if (!e.alive) continue;
+        if (e.x < player.x + player.w - 2 && e.x + e.w > player.x + 2 &&
+            e.y < player.y + player.h && e.y + e.h > player.y) {
+          e.alive = false;
+          hitPlayer();
+        }
+      }
+
+      // Clean dead enemies + check wave complete
+      const aliveCount = enemies.filter(e => e.alive).length;
+      if (aliveCount === 0 && gameRunning) {
+        startNextWave();
+      }
+
+      // Update particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.12;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+
+      updateUI();
+    }
+
+    function hitPlayer() {
+      lives--;
+      spawnParticle(player.x + 12, player.y + 10, '#00ccff');
+      playBeep(180, 220, 'sawtooth');
+      
+      if (lives <= 0) {
+        endGame();
+      } else {
+        resetPlayer();
+        // Brief invulnerability flash
+        setTimeout(() => {
+          if (gameRunning && !paused) resetPlayer();
+        }, 650);
+      }
+      updateUI();
+    }
+
+    function startNextWave() {
+      wave++;
+      enemySpeed = Math.min(2.8, 0.85 + wave * 0.22);
+      createEnemyFormation(wave);
+      playBeep(950, 90, 'square');
+      playBeep(1200, 60, 'sawtooth');
+    }
+
+    function updateUI() {
+      scoreEl.textContent = String(score).padStart(6, '0');
+      waveEl.textContent = String(wave).padStart(2, '0');
+      livesEl.textContent = '★'.repeat(Math.max(0, lives)) + '☆'.repeat(3 - Math.max(0, lives));
+    }
+
+    function draw() {
+      // Background
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, W, H);
+      drawStars();
+
+      // Enemies
+      enemies.forEach(e => {
+        if (e.alive) drawEnemy(e);
+      });
+
+      // Bullets
+      bullets.forEach(drawBullet);
+      enemyBullets.forEach(drawBullet);
+
+      // Player
+      if (!gameOver) drawPlayer();
+
+      // Particles
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0.3, p.life / 25);
+        ctx.fillRect(p.x, p.y, 2, 2);
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function endGame() {
+      gameRunning = false;
+      gameOver = true;
+      finalScoreEl.textContent = String(score).padStart(6, '0');
+      finalWaveEl.textContent = `WAVE ${wave}`;
+      gameOverOverlay.classList.add('show');
+    }
+
+    function restartGame() {
+      gameOverOverlay.classList.remove('show');
+      pauseOverlay.classList.remove('show');
+      
+      bullets = [];
+      enemyBullets = [];
+      particles = [];
+      score = 0;
+      wave = 1;
+      lives = 3;
+      enemyDir = 1;
+      enemySpeed = 0.9;
+      diveTimer = 0;
+      paused = false;
+      gameOver = false;
+      gameRunning = true;
+      
+      resetPlayer();
+      createEnemyFormation(1);
+      updateUI();
+    }
+
+    function togglePause() {
+      if (gameOver) return;
+      paused = !paused;
+      if (paused) {
+        pauseOverlay.classList.add('show');
+      } else {
+        pauseOverlay.classList.remove('show');
+      }
+    }
+
+    function playBeep(freq, duration, type = 'square') {
+      try {
+        const audio = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        
+        const filter = audio.createBiquadFilter();
+        filter.type = 'lowshelf';
+        filter.frequency.value = 800;
+        
+        gain.gain.value = 0.12;
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audio.destination);
+        
+        osc.start();
+        setTimeout(() => {
+          gain.gain.linearRampToValueAtTime(0.001, audio.currentTime + 0.06);
+          setTimeout(() => { osc.stop(); audio.close(); }, 80);
+        }, duration);
+      } catch(e) {}
+    }
+
+    function setupInput() {
+      window.addEventListener('keydown', (e) => {
+        keys[e.key] = true;
+        
+        if (e.key.toLowerCase() === 'p') {
+          e.preventDefault();
+          togglePause();
+        }
+        if ((e.key.toLowerCase() === 'r') && (gameOver || !gameRunning)) {
+          restartGame();
+        }
+        if (e.key === ' ') e.preventDefault();
+      });
+      
+      window.addEventListener('keyup', (e) => {
+        keys[e.key] = false;
+      });
+
+      // Mobile touch
+      canvas.addEventListener('touchstart', (e) => {
+        if (paused || gameOver || !gameRunning) return;
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const tx = touch.clientX - rect.left;
+        
+        if (tx < player.x) {
+          keys['ArrowLeft'] = true;
+        } else {
+          keys['ArrowRight'] = true;
+        }
+        
+        // Shoot on tap
+        if (Date.now() - lastShot > 160) {
+          bullets.push({ x: player.x + 10, y: player.y - 4, w: 4, h: 9 });
+          lastShot = Date.now();
+          playBeep(1400, 18, 'sawtooth');
+        }
+        e.preventDefault();
+      });
+      
+      canvas.addEventListener('touchend', () => {
+        keys['ArrowLeft'] = false;
+        keys['ArrowRight'] = false;
+      });
+    }
+
+    function init() {
+      resetPlayer();
+      createEnemyFormation(1);
+      updateUI();
+      setupInput();
+      
+      // Boot sound
+      setTimeout(() => playBeep(520, 60), 140);
+      
+      // Main loop
+      requestAnimationFrame(gameLoop);
+      
+      // Debug hint
+      console.log('%c[GALAGA \'26] Arrow keys or A/D + SPACE. Retro mode engaged.', 'color:#ffaa00');
+    }
+
+    // Boot the game
+    init();
+  </script>
+</body>
+</html>
