@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Lounge - Find - GLM & Games</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: #00ff9f;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      line-height: 1.4;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      position: relative;
+    }
+
+    #matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      opacity: 0.15;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1, h2 {
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff;
+    }
+
+    a {
+      color: #ffcc00;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .yt-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .yt-block {
+      text-align: center;
+      max-width: 200px;
+    }
+    .yt-block img {
+      border: 2px solid #333;
+      max-width: 100%;
+    }
+
+    .visitors {
+      font-size: 14px;
+      color: #ff8800;
+      margin: 12px 0;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 3px solid #00ff9f;
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      font-family: 'Press Start 2P', monospace;
+      background: #111;
+      color: #00ff9f;
+      border: 3px solid #00ff9f;
+      border-bottom: none;
+      padding: 8px 18px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-right: 4px;
+      transition: all 0.1s;
+    }
+    .tab-btn:hover {
+      background: #1a1a1a;
+    }
+    .tab-btn.active {
+      background: #00ff9f;
+      color: #000;
+      border-color: #00ff9f;
+    }
+
+    .tab-content {
+      display: none;
+      background: rgba(17, 17, 17, 0.92);
+      border: 4px solid #00ff9f;
+      padding: 14px;
+      box-shadow: 0 0 25px rgba(0, 255, 159, 0.25);
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .game-canvas {
+      display: block;
+      border: 3px solid #00ff9f;
+      background: #000;
+      image-rendering: pixelated;
+      margin: 0 auto 10px;
+    }
+
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: #00ffff;
+    }
+
+    .controls {
+      font-size: 10px;
+      margin: 6px 0;
+      color: #888;
+    }
+
+    button {
+      font-family: 'Press Start 2P', monospace;
+      background: #111;
+      color: #00ff9f;
+      border: 2px solid #00ff9f;
+      padding: 5px 12px;
+      font-size: 10px;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+    button:hover {
+      background: #00ff9f;
+      color: #000;
+    }
+
+    .old-school {
+      font-size: 10px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .footer-note {
+      font-size: 9px;
+      color: #444;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* Matrix style adjustments */
+    h1 {
+      text-shadow: 0 0 12px #00ffff, 0 0 4px #00ff9f;
+    }
+  </style>
+</head>
+<body>
+  <!-- Matrix Background Canvas -->
+  <canvas id="matrix-bg"></canvas>
+
+  <div class="content">
+    <h1>The Lounge - Find - GLM & Games</h1>
+
+    <div class="section">
+      <h2>FIND GLM</h2>
+      <p>Click the pictures below to go straight to the YouTube Channel.</p>
+      
+      <div class="yt-links">
+        <div class="yt-block">
+          <a href="https://www.youtube.com/@GLM2026" target="_blank">
+            <img src="image-20.jpg" alt="GLM 2026" width="180">
+            <br>GLM 2026
+          </a>
+        </div>
+        <div class="yt-block">
+          <a href="https://www.youtube.com/@420Flexaronnie" target="_blank">
+            <img src="32.jpg" alt="420Flexaronnie" width="180">
+            <br>420Flexaronnie
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="visitors">VISITORS: 1337</div>
+
+    <div class="section">
+      <h2>THE LOUNGE GAMES</h2>
+      <p class="old-school">Old school vibes only. Refresh to restart games.</p>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('galaga')">GALAGA '26</button>
+        <button class="tab-btn" onclick="switchTab('tetris')">TETRIS</button>
+      </div>
+
+      <!-- GALAGA Tab -->
+      <div id="galaga" class="tab-content active">
+        <canvas id="galaga-canvas" class="game-canvas" width="320" height="420"></canvas>
+        
+        <div class="info-bar">
+          <div>SCORE: <span id="galaga-score">000000</span></div>
+          <div>WAVE: <span id="galaga-wave">01</span></div>
+          <div>LIVES: <span id="galaga-lives">★★★</span></div>
+        </div>
+        
+        <div class="controls">← → Move &nbsp;|&nbsp; SPACE Shoot</div>
+        
+        <button onclick="galagaRestart()">RESTART</button>
+        <button onclick="galagaTogglePause()">PAUSE</button>
+      </div>
+
+      <!-- TETRIS Tab -->
+      <div id="tetris" class="tab-content">
+        <canvas id="tetris-canvas" class="game-canvas" width="240" height="480"></canvas>
+        
+        <div class="info-bar">
+          <div>SCORE: <span id="tetris-score">000000</span></div>
+          <div>LEVEL: <span id="tetris-level">01</span></div>
+          <div>LINES: <span id="tetris-lines">00</span></div>
+        </div>
+        
+        <div class="controls">← → Move &nbsp;|&nbsp; ↑/X Rotate &nbsp;|&nbsp; ↓ Soft &nbsp;|&nbsp; SPACE Hard</div>
+        
+        <button onclick="tetrisRestart()">RESTART</button>
+        <button onclick="tetrisTogglePause()">PAUSE</button>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      🖕😎🖕 • glmontherun.com
+    </div>
+  </div>
+
+  <script>
+    // ===================== MATRIX BACKGROUND =====================
+    const matrixCanvas = document.getElementById('matrix-bg');
+    const matrixCtx = matrixCanvas.getContext('2d');
+
+    function resizeMatrix() {
+      matrixCanvas.width = window.innerWidth;
+      matrixCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeMatrix);
+    resizeMatrix();
+
+    const matrixChars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+    const fontSize = 14;
+    let columns = Math.floor(matrixCanvas.width / fontSize);
+    let drops = [];
+
+    function initMatrix() {
+      columns = Math.floor(matrixCanvas.width / fontSize);
+      drops = [];
+      for (let i = 0; i < columns; i++) {
+        drops[i] = Math.random() * -100;
+      }
+    }
+
+    function drawMatrix() {
+      matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+      matrixCtx.fillStyle = '#00ff41';
+      matrixCtx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        matrixCtx.fillText(text, x, y);
+
+        if (y > matrixCanvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    function matrixLoop() {
+      drawMatrix();
+      requestAnimationFrame(matrixLoop);
+    }
+
+    initMatrix();
+    matrixLoop();
+    // Restart matrix drops occasionally for fresh look
+    setInterval(() => {
+      if (Math.random() > 0.7) initMatrix();
+    }, 15000);
+
+    // ===================== TAB SYSTEM =====================
+    function switchTab(tab) {
+      // Hide all
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+      // Show selected
+      document.getElementById(tab).classList.add('active');
+      
+      // Activate button
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        if (btn.textContent.includes(tab === 'galaga' ? 'GALAGA' : 'TETRIS')) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // ===================== GALAGA '26 =====================
+    (function() {
+      const canvas = document.getElementById('galaga-canvas');
+      const ctx = canvas.getContext('2d');
+      const scoreEl = document.getElementById('galaga-score');
+      const waveEl = document.getElementById('galaga-wave');
+      const livesEl = document.getElementById('galaga-lives');
+
+      let player, bullets = [], enemies = [], enemyBullets = [], particles = [];
+      let score = 0, wave = 1, lives = 3;
+      let gameRunning = true, paused = false;
+      let lastShot = 0, lastMove = 0, lastEnemyFire = 0;
+      let enemyDir = 1;
+      const keys = {};
+
+      function resetGalaga() {
+        player = { x: canvas.width / 2 - 12, y: canvas.height - 55, w: 24, h: 18 };
+        bullets = [];
+        enemyBullets = [];
+        particles = [];
+        score = 0;
+        wave = 1;
+        lives = 3;
+        enemyDir = 1;
+        gameRunning = true;
+        paused = false;
+
+        enemies = [];
+        const rows = 4;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < 7; c++) {
+            enemies.push({
+              x: 28 + c * 36,
+              y: 35 + r * 32,
+              w: 22, h: 16,
+              type: r < 2 ? 'elite' : 'basic',
+              alive: true,
+              dive: false
+            });
+          }
+        }
+        updateGalagaUI();
+      }
+
+      function updateGalagaUI() {
+        scoreEl.textContent = String(score).padStart(6, '0');
+        waveEl.textContent = String(wave).padStart(2, '0');
+        livesEl.textContent = '★'.repeat(lives) + '☆'.repeat(3 - lives);
+      }
+
+      function galagaShoot() {
+        const now = Date.now();
+        if (now - lastShot > 155) {
+          bullets.push({ x: player.x + 10, y: player.y - 2, w: 3, h: 8 });
+          lastShot = now;
+          playBeep(1350, 22);
+        }
+      }
+
+      function updateGalaga() {
+        if (!gameRunning || paused) return;
+        const now = Date.now();
+
+        // Movement
+        if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x = Math.max(5, player.x - 3.8);
+        if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x = Math.min(canvas.width - player.w - 5, player.x + 3.8);
+
+        // Shoot
+        if (keys[' '] && now - lastShot > 155) galagaShoot();
+
+        // Player bullets
+        for (let i = bullets.length - 1; i >= 0; i--) {
+          bullets[i].y -= 7;
+          if (bullets[i].y < 0) bullets.splice(i, 1);
+        }
+
+        // Enemy formation movement
+        if (now - lastMove > 45) {
+          let hitEdge = false;
+          enemies.forEach(e => {
+            if (!e.alive || e.dive) return;
+            e.x += enemyDir * (1.05 + (wave - 1) * 0.18);
+            if (e.x < 8 || e.x + e.w > canvas.width - 8) hitEdge = true;
+          });
+          if (hitEdge) {
+            enemyDir *= -1;
+            enemies.forEach(e => { if (e.alive && !e.dive) e.y += 9; });
+          }
+          lastMove = now;
+        }
+
+        // Diving enemies
+        if (Math.random() < 0.018 + wave * 0.003) {
+          const alive = enemies.filter(e => e.alive && !e.dive);
+          if (alive.length) alive[Math.floor(Math.random() * alive.length)].dive = true;
+        }
+
+        enemies.forEach(e => {
+          if (!e.alive || !e.dive) return;
+          e.y += 2.6;
+          e.x += Math.sin(Date.now() / 160 + e.x) * 1.4;
+          if (e.y > canvas.height - 40) {
+            e.dive = false;
+            e.y = 30 + Math.floor(Math.random() * 3) * 30;
+            e.x = 28 + Math.floor(Math.random() * 7) * 36;
+          }
+        });
+
+        // Enemy fire
+        if (now - lastEnemyFire > 360 - wave * 18) {
+          const live = enemies.filter(e => e.alive);
+          if (live.length) {
+            const shooter = live.sort((a,b) => Math.abs(a.x - player.x) - Math.abs(b.x - player.x))[0];
+            enemyBullets.push({ x: shooter.x + 9, y: shooter.y + 13, w: 3, h: 6 });
+            lastEnemyFire = now;
+            playBeep(260, 28);
+          }
+        }
+
+        for (let i = enemyBullets.length - 1; i >= 0; i--) {
+          enemyBullets[i].y += 3.5;
+          if (enemyBullets[i].y > canvas.height) enemyBullets.splice(i, 1);
+        }
+
+        // Collisions
+        for (let i = bullets.length - 1; i >= 0; i--) {
+          const b = bullets[i];
+          for (let j = 0; j < enemies.length; j++) {
+            const e = enemies[j];
+            if (!e.alive) continue;
+            if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
+              e.alive = false;
+              bullets.splice(i, 1);
+              score += (e.type === 'elite' ? 70 : 35) * wave;
+              createParticles(e.x + 10, e.y + 7, '#ffaa00');
+              playBeep(720, 45);
+              break;
+            }
+          }
+        }
+
+        for (let i = enemyBullets.length - 1; i >= 0; i--) {
+          const b = enemyBullets[i];
+          if (b.x < player.x + player.w && b.x + b.w > player.x &&
+              b.y < player.y + player.h && b.y + b.h > player.y) {
+            enemyBullets.splice(i, 1);
+            hitPlayerGalaga();
+          }
+        }
+
+        // Ramming
+        enemies.forEach(e => {
+          if (e.alive && e.x < player.x + player.w && e.x + e.w > player.x &&
+              e.y < player.y + player.h && e.y + e.h > player.y) {
+            e.alive = false;
+            hitPlayerGalaga();
+          }
+        });
+
+        // Wave complete
+        if (enemies.every(e => !e.alive)) {
+          wave++;
+          resetGalagaFormation();
+          playBeep(920, 65);
+        }
+
+        // Particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life--;
+          if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        updateGalagaUI();
+      }
+
+      function hitPlayerGalaga() {
+        lives--;
+        createParticles(player.x + 12, player.y + 9, '#00ccff');
+        playBeep(140, 200);
+        if (lives <= 0) gameRunning = false;
+        else player.x = canvas.width / 2 - 12;
+      }
+
+      function resetGalagaFormation() {
+        enemies = [];
+        const rows = Math.min(5, 3 + Math.floor(wave / 2));
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < 7; c++) {
+            enemies.push({
+              x: 28 + c * 36,
+              y: 35 + r * 32,
+              w: 22, h: 16,
+              type: r < 2 ? 'elite' : 'basic',
+              alive: true, dive: false
+            });
+          }
+        }
+      }
+
+      function createParticles(x, y, color) {
+        for (let i = 0; i < 6; i++) {
+          particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 3.2,
+            vy: (Math.random() - 0.5) * 2.8 - 0.5,
+            life: 18 + Math.random() * 12,
+            color
+          });
+        }
+      }
+
+      function drawGalaga() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Stars
+        ctx.fillStyle = '#222';
+        for (let i = 0; i < 35; i++) {
+          const sx = (i * 21) % canvas.width;
+          const sy = ((i * 37) % (canvas.height - 30)) + 8;
+          ctx.fillRect(sx, sy, 1, 1);
+        }
+
+        // Enemies
+        enemies.forEach(e => {
+          if (!e.alive) return;
+          ctx.fillStyle = e.type === 'elite' ? '#ff5500' : '#ffaa22';
+          ctx.fillRect(e.x + 2, e.y + 2, e.w - 4, e.h - 4);
+          ctx.fillStyle = '#ffff88';
+          ctx.fillRect(e.x + 6, e.y + 4, 10, 5);
+        });
+
+        // Player ship
+        ctx.fillStyle = '#00ccff';
+        ctx.fillRect(player.x + 4, player.y + 4, 16, 10);
+        ctx.fillRect(player.x, player.y + 9, 24, 4);
+        ctx.fillStyle = '#88ffff';
+        ctx.fillRect(player.x + 10, player.y, 4, 8);
+
+        // Bullets
+        ctx.fillStyle = '#00ffff';
+        bullets.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
+        ctx.fillStyle = '#ff6666';
+        enemyBullets.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
+
+        // Particles
+        particles.forEach(p => {
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0.2, p.life / 26);
+          ctx.fillRect(p.x, p.y, 2, 2);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      function galagaLoop() {
+        updateGalaga();
+        drawGalaga();
+        requestAnimationFrame(galagaLoop);
+      }
+
+      function galagaRestart() {
+        resetGalaga();
+      }
+
+      function galagaTogglePause() {
+        paused = !paused;
+      }
+
+      function initGalaga() {
+        resetGalaga();
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+          keys[e.key] = true;
+          if (e.key === ' ') e.preventDefault();
+          if (e.key.toLowerCase() === 'p') galagaTogglePause();
+          if ((e.key.toLowerCase() === 'r') && !gameRunning) galagaRestart();
+        });
+        document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+        // Touch
+        canvas.addEventListener('touchstart', e => {
+          if (paused || !gameRunning) return;
+          const rect = canvas.getBoundingClientRect();
+          const tx = e.touches[0].clientX - rect.left;
+          if (tx < player.x) keys['ArrowLeft'] = true;
+          else keys['ArrowRight'] = true;
+          galagaShoot();
+          e.preventDefault();
+        });
+        canvas.addEventListener('touchend', () => {
+          keys['ArrowLeft'] = keys['ArrowRight'] = false;
+        });
+
+        galagaLoop();
+      }
+
+      window.galagaRestart = galagaRestart;
+      window.galagaTogglePause = galagaTogglePause;
+
+      // Boot the game
+      initGalaga();
+    })();
+
+    // ===================== TETRIS =====================
+    (function() {
+      const canvas = document.getElementById('tetris-canvas');
+      const ctx = canvas.getContext('2d');
+      const scoreEl = document.getElementById('tetris-score');
+      const levelEl = document.getElementById('tetris-level');
+      const linesEl = document.getElementById('tetris-lines');
+
+      const COLS = 10;
+      const ROWS = 20;
+      const BLOCK = 24;
+
+      let board = [];
+      let curType, curX, curY, curRot, nextType;
+      let score = 0, linesCleared = 0, level = 1, dropInterval = 650, lastDrop;
+      let gameRunning = true, paused = false;
+      const keys = {};
+
+      const PIECES = {
+        I: { color: '#00ffff', rots: [[[1,1,1,1]], [[1],[1],[1],[1]]] },
+        O: { color: '#ffff00', rots: [[[1,1],[1,1]]] },
+        T: { color: '#bb00ff', rots: [[[0,1,0],[1,1,1]], [[1,0],[1,1],[1,0]], [[1,1,1],[0,1,0]], [[0,1],[1,1],[0,1]]] },
+        S: { color: '#00ff66', rots: [[[0,1,1],[1,1,0]], [[1,0],[1,1],[0,1]]] },
+        Z: { color: '#ff2244', rots: [[[1,1,0],[0,1,1]], [[0,1],[1,1],[1,0]]] },
+        J: { color: '#3388ff', rots: [[[1,0,0],[1,1,1]], [[1,1],[1,0],[1,0]], [[1,1,1],[0,0,1]], [[0,1],[0,1],[1,1]]] },
+        L: { color: '#ffaa00', rots: [[[0,0,1],[1,1,1]], [[1,0],[1,0],[1,1]], [[1,1,1],[1,0,0]], [[1,1],[0,1],[0,1]]] }
+      };
+      const TYPES = Object.keys(PIECES);
+
+      function initBoard() {
+        board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+      }
+
+      function randomType() {
+        return TYPES[Math.floor(Math.random() * TYPES.length)];
+      }
+
+      function getShape(type, rot) {
+        return PIECES[type].rots[rot % PIECES[type].rots.length];
+      }
+
+      function resetTetris() {
+        initBoard();
+        score = 0;
+        linesCleared = 0;
+        level = 1;
+        dropInterval = 650;
+        lastDrop = Date.now();
+        gameRunning = true;
+        paused = false;
+        nextType = randomType();
+        spawnPiece();
+        updateTetrisUI();
+      }
+
+      function spawnPiece() {
+        curType = nextType;
+        nextType = randomType();
+        curRot = 0;
+        const shape = getShape(curType, curRot);
+        curX = Math.floor((COLS - shape[0].length) / 2);
+        curY = 0;
+        if (tetrisCollides(curX, curY, shape)) gameRunning = false;
+      }
+
+      function tetrisCollides(x, y, shape) {
+        for (let r = 0; r < shape.length; r++) {
+          for (let c = 0; c < shape[r].length; c++) {
+            if (!shape[r][c]) continue;
+            const bx = x + c, by = y + r;
+            if (bx < 0 || bx >= COLS || by >= ROWS) return true;
+            if (by >= 0 && board[by][bx]) return true;
+          }
+        }
+        return false;
+      }
+
+      function lockPiece() {
+        const shape = getShape(curType, curRot);
+        for (let r = 0; r < shape.length; r++) {
+          for (let c = 0; c < shape[r].length; c++) {
+            if (shape[r][c]) {
+              const bx = curX + c, by = curY + r;
+              if (by >= 0) board[by][bx] = PIECES[curType].color;
+            }
+          }
+        }
+        clearLines();
+        spawnPiece();
+      }
+
+      function clearLines() {
+        let cleared = 0;
+        for (let r = ROWS - 1; r >= 0; r--) {
+          if (board[r].every(cell => cell)) {
+            board.splice(r, 1);
+            board.unshift(Array(COLS).fill(null));
+            cleared++;
+            r++;
+          }
+        }
+        if (cleared > 0) {
+          score += [0, 40, 100, 300, 1200][cleared] * level;
+          linesCleared += cleared;
+          level = Math.floor(linesCleared / 10) + 1;
+          dropInterval = Math.max(110, 650 - (level - 1) * 48);
+          playBeep(880, 55);
+        }
+      }
+
+      function tetrisMove(dx) {
+        if (!gameRunning || paused) return;
+        const shape = getShape(curType, curRot);
+        if (!tetrisCollides(curX + dx, curY, shape)) {
+          curX += dx;
+          playBeep(240, 12);
+        }
+      }
+
+      function tetrisRotate() {
+        if (!gameRunning || paused) return;
+        const newRot = (curRot + 1) % PIECES[curType].rots.length;
+        const shape = getShape(curType, newRot);
+        let tx = curX;
+        if (tetrisCollides(tx, curY, shape)) { tx++; if (tetrisCollides(tx, curY, shape)) tx -= 2; }
+        if (!tetrisCollides(tx, curY, shape)) {
+          curRot = newRot;
+          curX = tx;
+          playBeep(680, 22);
+        }
+      }
+
+      function tetrisSoftDrop() {
+        if (!gameRunning || paused) return;
+        const shape = getShape(curType, curRot);
+        if (!tetrisCollides(curX, curY + 1, shape)) {
+          curY++;
+          score++;
+        }
+      }
+
+      function tetrisHardDrop() {
+        if (!gameRunning || paused) return;
+        const shape = getShape(curType, curRot);
+        let d = 0;
+        while (!tetrisCollides(curX, curY + d + 1, shape)) d++;
+        curY += d;
+        score += d * 2;
+        lockPiece();
+        playBeep(1050, 30);
+      }
+
+      function updateTetrisUI() {
+        scoreEl.textContent = String(score).padStart(6, '0');
+        levelEl.textContent = String(level).padStart(2, '0');
+        linesEl.textContent = String(linesCleared).padStart(2, '0');
+      }
+
+      function drawTetris() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = '#1a1a1a';
+        for (let x = 0; x <= COLS; x++) {
+          ctx.beginPath(); ctx.moveTo(x * BLOCK, 0); ctx.lineTo(x * BLOCK, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y <= ROWS; y++) {
+          ctx.beginPath(); ctx.moveTo(0, y * BLOCK); ctx.lineTo(canvas.width, y * BLOCK); ctx.stroke();
+        }
+
+        // Placed blocks
+        for (let y = 0; y < ROWS; y++) {
+          for (let x = 0; x < COLS; x++) {
+            if (board[y][x]) {
+              ctx.fillStyle = board[y][x];
+              ctx.fillRect(x * BLOCK + 1, y * BLOCK + 1, BLOCK - 2, BLOCK - 2);
+            }
+          }
+        }
+
+        if (curType && gameRunning) {
+          const shape = getShape(curType, curRot);
+          // Ghost
+          let gy = curY;
+          while (!tetrisCollides(curX, gy + 1, shape)) gy++;
+          ctx.fillStyle = 'rgba(0, 255, 159, 0.18)';
+          shape.forEach((row, r) => row.forEach((val, c) => {
+            if (val) ctx.fillRect((curX + c) * BLOCK + 1, (gy + r) * BLOCK + 1, BLOCK - 2, BLOCK - 2);
+          }));
+
+          // Piece
+          ctx.fillStyle = PIECES[curType].color;
+          shape.forEach((row, r) => row.forEach((val, c) => {
+            if (val) ctx.fillRect((curX + c) * BLOCK + 1, (curY + r) * BLOCK + 1, BLOCK - 2, BLOCK - 2);
+          }));
+        }
+      }
+
+      function updateTetris() {
+        if (!gameRunning || paused) return;
+        const now = Date.now();
+        const shape = getShape(curType, curRot);
+        if (now - lastDrop > dropInterval) {
+          if (!tetrisCollides(curX, curY + 1, shape)) curY++;
+          else lockPiece();
+          lastDrop = now;
+        }
+      }
+
+      function tetrisLoop() {
+        updateTetris();
+        drawTetris();
+        updateTetrisUI();
+        requestAnimationFrame(tetrisLoop);
+      }
+
+      function tetrisRestart() {
+        resetTetris();
+      }
+
+      function tetrisTogglePause() {
+        paused = !paused;
+      }
+
+      function initTetris() {
+        resetTetris();
+
+        document.addEventListener('keydown', e => {
+          if (!gameRunning || paused) {
+            if (e.key.toLowerCase() === 'r') tetrisRestart();
+            return;
+          }
+          switch (e.key) {
+            case 'ArrowLeft': case 'a': case 'A': tetrisMove(-1); break;
+            case 'ArrowRight': case 'd': case 'D': tetrisMove(1); break;
+            case 'ArrowDown': case 's': case 'S': tetrisSoftDrop(); break;
+            case 'ArrowUp': case 'w': case 'W': case 'x': case 'X': tetrisRotate(); break;
+            case ' ': e.preventDefault(); tetrisHardDrop(); break;
+            case 'p': case 'P': tetrisTogglePause(); break;
+            case 'r': case 'R': tetrisRestart(); break;
+          }
+        });
+
+        let touchStart = 0;
+        canvas.addEventListener('touchstart', e => {
+          touchStart = e.touches[0].clientX;
+          e.preventDefault();
+        });
+        canvas.addEventListener('touchend', e => {
+          if (!gameRunning || paused) return;
+          const diff = e.changedTouches[0].clientX - touchStart;
+          if (Math.abs(diff) > 22) tetrisMove(diff > 0 ? 1 : -1);
+          else tetrisRotate();
+          e.preventDefault();
+        });
+
+        tetrisLoop();
+      }
+
+      window.tetrisRestart = tetrisRestart;
+      window.tetrisTogglePause = tetrisTogglePause;
+
+      initTetris();
+    })();
+
+    // ===================== SOUND =====================
+    function playBeep(freq, duration) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.value = 0.09;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        setTimeout(() => {
+          gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+          setTimeout(() => osc.stop(), 50);
+        }, duration);
+      } catch (e) {}
+    }
+
+    // Make sure first tab is active on load
+    console.log('%c[Matrix + Tabs] Lounge games ready. Matrix rain running in background.', 'color:#00ff9f');
+  </script>
+</body>
+</html>
