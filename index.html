@@ -409,7 +409,7 @@
 
     <div class="section" id="cards-section">
       <h2>ILLUMINATI CARDS</h2>
-      <p class="old-school">INWO Card Archive â€” Illuminati: New World Order (1994â€“1998)</p>
+      <p class="old-school">INWO Card Archive &mdash; Illuminati: New World Order (1994&ndash;1998)</p>
 
       <div class="cards-panel">
         <div class="cards-toolbar">
@@ -451,7 +451,7 @@
     </div>
 
     <div class="footer-note">
-      ðŸ–•ðŸ˜ŽðŸ–• â€¢ glmontherun.com
+      &#128405;&#128526;&#128405; &bull; glmontherun.com
     </div>
   </div>
 
@@ -520,15 +520,31 @@
     }, 15000);
 
     // ===================== ILLUMINATI CARDS =====================
-    const CARD_DATA_URL = 'illuminati-archive/dist/data/cards.json';
-    const CARD_IMG_BASE = 'illuminati-archive/dist/';
+    const CARD_DATA_URLS = [
+      'data/cards.json',
+      'illuminati-archive/dist/data/cards.json'
+    ];
 
     let cardCatalog = null;
     let cardFilters = { query: '', set: '', type: '', rarity: '', notableOnly: false };
 
     function cardImage(card) {
       if (!card.image) return '';
-      return `${CARD_IMG_BASE}${card.image}`;
+      return card.image;
+    }
+
+    async function loadCardCatalog() {
+      let lastError = null;
+      for (const url of CARD_DATA_URLS) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+          return await res.json();
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error('Card catalog not found');
     }
 
     function getFilteredCards() {
@@ -568,7 +584,7 @@
       el.innerHTML = `
         <h3>NOTABLE CARDS</h3>
         <p class="notable-intro">
-          Satirical conspiracy fiction from 1994 â€” not prophecy. These cards went viral
+          Satirical conspiracy fiction from 1994 &mdash; not prophecy. These cards went viral
           because artwork loosely resembled later events.
         </p>
         <div class="notable-scroll">
@@ -698,9 +714,7 @@
 
     async function initCards() {
       try {
-        const res = await fetch(CARD_DATA_URL);
-        if (!res.ok) throw new Error('Card catalog not found');
-        cardCatalog = await res.json();
+        cardCatalog = await loadCardCatalog();
 
         const typeSelect = document.getElementById('type-filter');
         cardCatalog.types.forEach((t) => {
@@ -715,8 +729,8 @@
       } catch (err) {
         document.getElementById('card-grid').innerHTML = `
           <p class="cards-error">
-            Could not load cards. Run start-illuminati-archive.bat first,<br>
-            or serve this page from the bin folder.
+            Could not load cards. Deploy <code>data/cards.json</code> and the <code>cards/</code> folder<br>
+            to your site root, then refresh.
           </p>
         `;
         document.getElementById('card-stats').textContent = '0 cards';
