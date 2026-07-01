@@ -1,16 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>The Lounge - Find - GLM & INWO</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      overflow-x: hidden;
     }
 
     body {
@@ -21,7 +22,7 @@
       max-width: 1100px;
       margin-left: auto;
       margin-right: auto;
-      padding: 20px;
+      padding: 15px;
       position: relative;
     }
 
@@ -46,12 +47,18 @@
       z-index: 1;
       background: rgba(10, 10, 10, 0.55);
       border-radius: 4px;
-      padding: 10px 15px;
+      padding: 15px;
+      box-sizing: border-box;
     }
 
     h1, h2 {
       color: #00ffff;
       text-shadow: 0 0 10px #00ffff;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      text-shadow: 0 0 12px #00ffff, 0 0 4px #00ff9f;
     }
 
     a {
@@ -68,38 +75,42 @@
 
     .yt-links {
       display: flex;
-      gap: 20px;
+      gap: 15px;
       flex-wrap: wrap;
+      justify-content: center;
     }
     .yt-block {
       text-align: center;
-      max-width: 200px;
+      max-width: 180px;
+      flex: 1 1 160px;
     }
     .yt-block img {
       border: 2px solid #333;
       max-width: 100%;
+      height: auto;
+      display: block;
     }
 
     .visitors {
       font-size: 14px;
       color: #ff8800;
       margin: 12px 0;
+      text-align: center;
     }
 
     /* Illuminati Cards */
     .cards-panel {
       background: rgba(17, 17, 17, 0.65);
       border: 4px solid #00ff9f;
-      padding: 14px;
+      padding: 12px;
       box-shadow: 0 0 25px rgba(0, 255, 159, 0.25);
     }
 
     .cards-toolbar {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 10px;
-      align-items: center;
-      justify-content: space-between;
+      align-items: stretch;
       margin-bottom: 12px;
     }
 
@@ -108,27 +119,31 @@
       background: #000;
       color: #00ff9f;
       border: 2px solid #00ff9f;
-      padding: 8px 10px;
-      font-size: 10px;
-      flex: 1;
-      min-width: 200px;
+      padding: 10px;
+      font-size: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     #card-stats {
       font-size: 10px;
       color: #ffcc00;
+      text-align: center;
     }
 
     .set-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .set-tab {
-      font-size: 8px;
-      padding: 6px 10px;
+      font-size: 9px;
+      padding: 8px 12px;
+      flex: 1;
+      min-width: 60px;
+      text-align: center;
     }
     .set-tab.active {
       background: #00ff9f;
@@ -138,13 +153,18 @@
     .cards-filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 14px;
-      font-size: 9px;
+      font-size: 10px;
+      align-items: center;
     }
 
     .cards-filters label {
       color: #00ffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
     }
 
     .cards-filters select {
@@ -152,9 +172,14 @@
       background: #000;
       color: #00ff9f;
       border: 2px solid #333;
-      padding: 4px 6px;
-      font-size: 8px;
-      margin-left: 6px;
+      padding: 8px 10px;
+      font-size: 9px;
+    }
+
+    .cards-filters input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
     }
 
     .notable-cards h3 {
@@ -172,14 +197,15 @@
 
     .notable-scroll {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       overflow-x: auto;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .notable-card {
-      flex: 0 0 140px;
+      flex: 0 0 130px;
       background: #111;
       border: 2px solid #ffcc00;
       cursor: pointer;
@@ -192,7 +218,8 @@
 
     .notable-card img {
       width: 100%;
-      height: 190px;
+      height: auto;
+      max-height: 180px;
       object-fit: cover;
       display: block;
       image-rendering: auto;
@@ -216,6 +243,7 @@
       max-height: 520px;
       overflow-y: auto;
       padding-right: 4px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .grid-card {
@@ -231,7 +259,8 @@
 
     .grid-card img {
       width: 100%;
-      height: 170px;
+      height: auto;
+      max-height: 180px;
       object-fit: cover;
       display: block;
     }
@@ -274,18 +303,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 10px;
+      box-sizing: border-box;
     }
 
     .detail-panel {
       background: #111;
       border: 4px solid #00ff9f;
-      max-width: 700px;
-      max-height: 90vh;
+      max-width: 95%;
+      max-height: 92vh;
       overflow-y: auto;
       width: 100%;
+      margin: 10px;
       position: relative;
       box-shadow: 0 0 40px rgba(0, 255, 159, 0.3);
+      -webkit-overflow-scrolling: touch;
     }
 
     .detail-close {
@@ -294,6 +326,8 @@
       right: 8px;
       font-size: 14px;
       z-index: 2;
+      min-width: 36px;
+      min-height: 36px;
     }
 
     .detail-image img {
@@ -349,8 +383,8 @@
       background: #111;
       color: #00ff9f;
       border: 2px solid #00ff9f;
-      padding: 5px 12px;
-      font-size: 10px;
+      padding: 8px 14px;
+      font-size: 11px;
       cursor: pointer;
       margin-right: 6px;
     }
@@ -372,9 +406,34 @@
       margin-top: 20px;
     }
 
-    /* Matrix style adjustments */
-    h1 {
-      text-shadow: 0 0 12px #00ffff, 0 0 4px #00ff9f;
+    @media (min-width: 768px) {
+      body { padding: 20px; }
+      .cards-toolbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      #card-search {
+        flex: 1;
+        min-width: 280px;
+        width: auto;
+      }
+      #card-stats { text-align: right; }
+      .yt-links { justify-content: flex-start; }
+      .detail-panel {
+        max-width: 700px;
+        max-height: 90vh;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.1rem; }
+      .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      }
+      .notable-card {
+        flex: 0 0 110px;
+      }
     }
   </style>
 </head>
@@ -392,13 +451,13 @@
       <div class="yt-links">
         <div class="yt-block">
           <a href="https://www.youtube.com/@GLM2026" target="_blank">
-            <img src="image-20.jpg" alt="GLM 2026" width="180">
+            <img src="image-20.jpg" alt="GLM 2026" loading="lazy">
             <br>GLM 2026
           </a>
         </div>
         <div class="yt-block">
           <a href="https://www.youtube.com/@420Flexaronnie" target="_blank">
-            <img src="32.jpg" alt="420Flexaronnie" width="180">
+            <img src="32.jpg" alt="420Flexaronnie" loading="lazy">
             <br>420Flexaronnie
           </a>
         </div>
@@ -474,7 +533,7 @@
     }
 
     function resizeMatrix() {
-      matrixCanvas.width = window.innerWidth;
+      matrixCanvas.width = Math.max(window.innerWidth, 320);
       matrixCanvas.height = window.innerHeight;
       initMatrix();
     }
@@ -509,12 +568,18 @@
       requestAnimationFrame(matrixLoop);
     }
 
-    // Initial setup
+    let lastResize = 0;
+    window.addEventListener('resize', () => {
+      const now = Date.now();
+      if (now - lastResize > 100) {
+        lastResize = now;
+        resizeMatrix();
+      }
+    });
+
     resizeMatrix();
-    window.addEventListener('resize', resizeMatrix);
     matrixLoop();
 
-    // Restart matrix drops occasionally for fresh look
     setInterval(() => {
       if (Math.random() > 0.7) initMatrix();
     }, 15000);
@@ -617,11 +682,11 @@
 
       el.innerHTML = list.map((card) => `
         <article class="grid-card" data-id="${card.id}">
-          ${card.notable ? '<span class="notable-badge">â˜…</span>' : ''}
+          ${card.notable ? '<span class="notable-badge">★</span>' : ''}
           <img src="${cardImage(card)}" alt="${card.name}" loading="lazy" />
           <div class="grid-card-info">
             <strong>${card.name}</strong>
-            <span>${card.set} Â· ${card.type}</span>
+            <span>${card.set} · ${card.type}</span>
           </div>
         </article>
       `).join('');
@@ -657,7 +722,7 @@
           <div class="detail-panel">
             <button class="detail-close" aria-label="Close">&times;</button>
             <div class="detail-image">
-              ${card.image ? `<img src="${cardImage(card)}" alt="${card.name}" />` : ''}
+              ${card.image ? `<img src="${cardImage(card)}" alt="${card.name}" loading="lazy" />` : ''}
             </div>
             <div class="detail-body">
               <h2>${card.name}</h2>
@@ -739,7 +804,7 @@
 
     initCards();
 
-    console.log('%c[Matrix + INWO] Lounge cards ready. Matrix rain running in background.', 'color:#00ff9f');
+    console.log('%c[Mobile-Optimized Matrix + INWO] Lounge ready.', 'color:#00ff9f');
   </script>
 </body>
 </html>
