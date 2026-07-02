@@ -202,6 +202,17 @@ export default function App() {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#0f172a_0%,_#020308_60%)] text-slate-100">
       <Toast toasts={toasts} onDismiss={dismissToast} />
       <header className="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur">
+        <nav className="mx-auto flex max-w-7xl flex-wrap gap-2 border-b border-slate-800/60 px-4 py-2 text-xs font-semibold sm:px-6">
+          <a
+            href="/"
+            className="rounded-full border border-slate-700/70 px-3 py-1.5 text-slate-300 transition hover:border-cyan-400/50 hover:text-white"
+          >
+            Lounge
+          </a>
+          <span className="rounded-full border border-cyan-400/60 bg-cyan-400/15 px-3 py-1.5 text-cyan-200">
+            Powder-Toy
+          </span>
+        </nav>
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-fuchsia-600 text-xl shadow-lg shadow-cyan-500/20">
