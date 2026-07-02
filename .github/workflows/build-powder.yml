@@ -22,7 +22,7 @@ jobs:
         working-directory: powder-toy-game-concept
       - run: npm run build
         working-directory: powder-toy-game-concept
-      - run: cp powder-toy-game-concept/dist/index.html powder.html
+      - run: cp powder-toy-game-concept/dist/powder.html powder.html
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'Build powder.html from Vite'
