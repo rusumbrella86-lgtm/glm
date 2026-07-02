@@ -473,84 +473,270 @@
 
   <div class="content">
     <nav class="site-nav" aria-label="Site sections">
-      <a href="/" class="active" aria-current="page">Lounge</a>
+      <a href="index.html" class="active">Find</a>
       <a href="powder.html">Powder-Toy</a>
+      <a href="chat.html">Chat</a>
+      <a href="music.html">Music</a>
+      <a href="movies.html">Movies</a>
+      <a href="games.html">Games</a>
+      <a href="about.html">About</a>
     </nav>
 
-    <h1>The Lounge - Find - GLM & INWO</h1>
+    <h1>THE LOUNGE - FIND</h1>
+    <p class="old-school">Welcome to the underground. GLM & INWO card database, conspiracy links, and retro vibes since forever.</p>
 
     <div class="section">
-      <h2>FIND GLM</h2>
-      <p>Click the pictures below to go straight to the YouTube Channel.</p>
-      
+      <h2>Visitor Counter</h2>
+      <div class="visitors" id="visitor-count">Loading visitors...</div>
+    </div>
+
+    <div class="section">
+      <h2>YouTube Channels</h2>
       <div class="yt-links">
         <div class="yt-block">
-          <a href="https://www.youtube.com/@GLM2026" target="_blank">
-            <img src="image-20.jpg" alt="GLM 2026" loading="lazy">
-            <br>GLM 2026
+          <a href="https://www.youtube.com/@GLMOfficial" target="_blank" rel="noopener">
+            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="GLM Channel">
+            GLM Official
           </a>
         </div>
         <div class="yt-block">
-          <a href="https://www.youtube.com/@420Flexaronnie" target="_blank">
-            <img src="32.jpg" alt="420Flexaronnie" loading="lazy">
-            <br>420Flexaronnie
+          <a href="https://www.youtube.com/@INWO" target="_blank" rel="noopener">
+            <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="INWO Channel">
+            INWO
           </a>
         </div>
       </div>
     </div>
 
-    <div class="visitors">VISITORS: 1337</div>
-
-    <div class="section" id="cards-section">
-      <h2>ILLUMINATI CARDS</h2>
-      <p class="old-school">INWO Card Archive &mdash; Illuminati: New World Order (1994&ndash;1998)</p>
-
+    <div class="section">
+      <h2>Illuminati: New World Order Cards</h2>
       <div class="cards-panel">
         <div class="cards-toolbar">
-          <input type="search" id="card-search" placeholder="Search cards..." aria-label="Search cards" />
-          <span id="card-stats">Loading...</span>
+          <input type="search" id="card-search" placeholder="Search cards..." autocomplete="off">
+          <div id="card-stats">Loading card database...</div>
         </div>
-
         <div class="set-tabs" id="set-tabs"></div>
-
         <div class="cards-filters">
-          <label>Type
-            <select id="type-filter">
-              <option value="">All types</option>
-            </select>
-          </label>
-          <label>Rarity
-            <select id="rarity-filter">
-              <option value="">All rarities</option>
-              <option value="C">Common</option>
-              <option value="U">Uncommon</option>
-              <option value="R">Rare</option>
-              <option value="I">Illuminati</option>
-              <option value="S">Special</option>
-              <option value="UR">Ultra-Rare</option>
-            </select>
-          </label>
-          <label>
-            <input type="checkbox" id="notable-filter" /> Notable only
-          </label>
+          <label><input type="checkbox" id="filter-notable"> Notable only</label>
+          <label>Set: <select id="filter-set"><option value="">All sets</option></select></label>
+          <label>Type: <select id="filter-type"><option value="">All types</option></select></label>
         </div>
-
-        <div id="notable-cards" class="notable-cards"></div>
-        <div id="card-grid" class="card-grid">
-          <p class="cards-loading">Loading card catalog...</p>
+        <div class="notable-cards" id="notable-section" hidden>
+          <h3>Notable / Predictive Cards</h3>
+          <p class="notable-intro">Cards often cited in conspiracy discussions. Click for details.</p>
+          <div class="notable-scroll" id="notable-scroll"></div>
+        </div>
+        <div id="cards-container">
+          <div class="cards-loading">Loading INWO card data...</div>
         </div>
       </div>
-
-      <div id="card-detail"></div>
     </div>
 
-    <div class="footer-note">
-      &#128405;&#128526;&#128405; &bull; glmontherun.com
+    <p class="footer-note">The Lounge &copy; GLM & INWO | Matrix edition</p>
+  </div>
+
+  <div id="detail-overlay" class="detail-overlay" hidden>
+    <div class="detail-panel">
+      <button class="detail-close" id="detail-close" aria-label="Close">X</button>
+      <div class="detail-image" id="detail-image"></div>
+      <div class="detail-body" id="detail-body"></div>
     </div>
   </div>
 
   <script>
-    // PLACEHOLDER_FOR_SCRIPT
+    // Matrix rain background
+    (function() {
+      const canvas = document.getElementById('matrix-bg');
+      const ctx = canvas.getContext('2d');
+      let width, height, columns, drops;
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()アイウエオカキクケコ';
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        columns = Math.floor(width / 14);
+        drops = Array(columns).fill(1);
+      }
+      function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = '#00ff9f';
+        ctx.font = '14px monospace';
+        for (let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(text, i * 14, drops[i] * 14);
+          if (drops[i] * 14 > height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      setInterval(draw, 50);
+    })();
+
+    // Visitor counter (localStorage demo)
+    (function() {
+      let count = parseInt(localStorage.getItem('loungeVisitors') || '1337', 10);
+      count++;
+      localStorage.setItem('loungeVisitors', count);
+      document.getElementById('visitor-count').textContent = 'Visitors: ' + count.toLocaleString();
+    })();
+
+    // INWO Card Database
+    const CARD_DATA_URL = 'cards.json';
+    let allCards = [];
+    let activeSet = 'all';
+    let searchQuery = '';
+    let filterNotable = false;
+    let filterSet = '';
+    let filterType = '';
+
+    const notableContext = {
+      'Terrorist Nuke': 'Often cited after 9/11 discussions.',
+      'Combined Disasters': 'Referenced in various disaster event discussions.',
+      ' Pentagon': 'Cited in 9/11 conspiracy contexts.',
+      'New World Order': 'Central theme of the card game and conspiracy lore.',
+      'Epidemic': 'Referenced during pandemic discussions.',
+      'Market Crash': 'Cited during financial crisis events.'
+    };
+
+    async function loadCards() {
+      const container = document.getElementById('cards-container');
+      try {
+        const res = await fetch(CARD_DATA_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        allCards = await res.json();
+        initFilters();
+        renderCards();
+        renderNotable();
+      } catch (err) {
+        container.innerHTML = '<div class="cards-error">Failed to load cards: ' + err.message + '</div>';
+        document.getElementById('card-stats').textContent = 'Error loading database';
+      }
+    }
+
+    function initFilters() {
+      const sets = [...new Set(allCards.map(c => c.set).filter(Boolean))].sort();
+      const types = [...new Set(allCards.map(c => c.type).filter(Boolean))].sort();
+      const setSelect = document.getElementById('filter-set');
+      const typeSelect = document.getElementById('filter-type');
+      sets.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; setSelect.appendChild(o); });
+      types.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; typeSelect.appendChild(o); });
+      const tabs = document.getElementById('set-tabs');
+      const tabAll = document.createElement('button');
+      tabAll.className = 'set-tab site-nav a active'; tabAll.textContent = 'All';
+      tabAll.onclick = () => setActiveSet('all');
+      tabs.appendChild(tabAll);
+      sets.forEach(s => {
+        const btn = document.createElement('button');
+        btn.className = 'set-tab site-nav a'; btn.textContent = s;
+        btn.onclick = () => setActiveSet(s);
+        tabs.appendChild(btn);
+      });
+    }
+
+    function setActiveSet(set) {
+      activeSet = set;
+      document.querySelectorAll('.set-tab').forEach(t => t.classList.toggle('active', t.textContent === set || (set === 'all' && t.textContent === 'All')));
+      renderCards();
+    }
+
+    function getFilteredCards() {
+      return allCards.filter(c => {
+        if (activeSet !== 'all' && c.set !== activeSet) return false;
+        if (filterSet && c.set !== filterSet) return false;
+        if (filterType && c.type !== filterType) return false;
+        if (filterNotable && !c.notable) return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const hay = (c.name + ' ' + (c.text || '') + ' ' + (c.set || '')).toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderCards() {
+      const filtered = getFilteredCards();
+      const container = document.getElementById('cards-container');
+      document.getElementById('card-stats').textContent = filtered.length + ' / ' + allCards.length + ' cards';
+      if (!filtered.length) {
+        container.innerHTML = '<div class="cards-loading">No cards match your filters.</div>';
+        return;
+      }
+      const grid = document.createElement('div');
+      grid.className = 'card-grid';
+      filtered.forEach(card => grid.appendChild(createGridCard(card)));
+      container.innerHTML = '';
+      container.appendChild(grid);
+    }
+
+    function createGridCard(card) {
+      const el = document.createElement('div');
+      el.className = 'grid-card';
+      el.onclick = () => showDetail(card);
+      const img = document.createElement('img');
+      img.src = card.image || 'placeholder-card.png';
+      img.alt = card.name;
+      img.loading = 'lazy';
+      el.appendChild(img);
+      if (card.notable) {
+        const badge = document.createElement('span');
+        badge.className = 'notable-badge'; badge.textContent = 'NOTABLE';
+        el.appendChild(badge);
+      }
+      const info = document.createElement('div');
+      info.className = 'grid-card-info';
+      info.innerHTML = '<strong>' + escapeHtml(card.name) + '</strong>' + escapeHtml(card.set || '');
+      el.appendChild(info);
+      return el;
+    }
+
+    function renderNotable() {
+      const notable = allCards.filter(c => c.notable);
+      const section = document.getElementById('notable-section');
+      const scroll = document.getElementById('notable-scroll');
+      if (!notable.length) { section.hidden = true; return; }
+      section.hidden = false;
+      scroll.innerHTML = '';
+      notable.forEach(card => {
+        const el = document.createElement('div');
+        el.className = 'notable-card';
+        el.onclick = () => showDetail(card);
+        el.innerHTML = '<img src="' + (card.image || '') + '" alt="' + escapeHtml(card.name) + '" loading="lazy"><div class="notable-card-body"><strong>' + escapeHtml(card.name) + '</strong>' + escapeHtml((card.text || '').slice(0, 80)) + '...</div>';
+        scroll.appendChild(el);
+      });
+    }
+
+    function showDetail(card) {
+      const overlay = document.getElementById('detail-overlay');
+      document.getElementById('detail-image').innerHTML = '<img src="' + (card.image || '') + '" alt="' + escapeHtml(card.name) + '">';
+      let badges = '<div class="card-badges">';
+      if (card.set) badges += '<span class="card-badge">' + escapeHtml(card.set) + '</span>';
+      if (card.type) badges += '<span class="card-badge">' + escapeHtml(card.type) + '</span>';
+      if (card.notable) badges += '<span class="card-badge">NOTABLE</span>';
+      badges += '</div>';
+      let context = '';
+      if (card.notable && notableContext[card.name]) {
+        context = '<div class="notable-context"><h3>Conspiracy Context</h3><p>' + escapeHtml(notableContext[card.name]) + '</p></div>';
+      }
+      document.getElementById('detail-body').innerHTML = '<h2>' + escapeHtml(card.name) + '</h2>' + badges + '<p class="card-text">' + escapeHtml(card.text || 'No description available.') + '</p>' + context;
+      overlay.hidden = false;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.getElementById('detail-close').onclick = () => document.getElementById('detail-overlay').hidden = true;
+    document.getElementById('detail-overlay').onclick = e => { if (e.target.id === 'detail-overlay') e.target.hidden = true; };
+    document.getElementById('card-search').oninput = e => { searchQuery = e.target.value; renderCards(); };
+    document.getElementById('filter-notable').onchange = e => { filterNotable = e.target.checked; renderCards(); };
+    document.getElementById('filter-set').onchange = e => { filterSet = e.target.value; renderCards(); };
+    document.getElementById('filter-type').onchange = e => { filterType = e.target.value; renderCards(); };
+
+    loadCards();
+    console.log('%c THE LOUNGE ', 'background:#00ff9f;color:#000;font-weight:bold', 'Find page loaded.');
+    console.log('%c GLM & INWO ', 'background:#111;color:#00ff9f');
   </script>
 </body>
 </html>
