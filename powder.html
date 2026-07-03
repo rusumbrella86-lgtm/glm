@@ -1,1 +1,24 @@
-LOAD_FROM_PYTHON
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Powder Sandbox — Falling Sand Physics Game</title>
+</head>
+<body>
+  <script>
+    const N = 10;
+    Promise.all(
+      Array.from({ length: N }, (_, i) =>
+        fetch('powder-p' + i + '.txt').then((r) => r.text())
+      )
+    ).then((parts) => {
+      const html = parts.join('');
+      document.open();
+      document.write(html);
+      document.close();
+    });
+  </script>
+  <p style="font-family: system-ui, sans-serif; color: #94a3b8;">Loading Powder Sandbox…</p>
+</body>
+</html>
