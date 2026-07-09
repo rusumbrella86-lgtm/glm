@@ -406,6 +406,125 @@
       margin-top: 20px;
     }
 
+    /* Lounge apps / games */
+    .lounge-apps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .app-card {
+      display: block;
+      background: rgba(17, 17, 17, 0.85);
+      border: 3px solid #00ffff;
+      padding: 0;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 0 18px rgba(0, 255, 255, 0.18);
+      transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .app-card:hover {
+      transform: translateY(-3px);
+      border-color: #ffcc00;
+      box-shadow: 0 0 28px rgba(255, 204, 0, 0.35);
+      text-decoration: none;
+    }
+    .app-card:active {
+      transform: translateY(-1px);
+    }
+
+    .app-card-art {
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 55%, #1a1040 0%, #05060f 70%);
+    }
+
+    .app-card-art.solar .orbit {
+      position: absolute;
+      border: 1px solid rgba(140, 170, 255, 0.25);
+      border-radius: 50%;
+    }
+    .app-card-art.solar .sun {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff6c8, #ffcc33 50%, #e07010);
+      box-shadow: 0 0 22px #ffaa00, 0 0 40px rgba(255, 140, 0, 0.5);
+      z-index: 2;
+    }
+    .app-card-art.solar .planet {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 2;
+    }
+    .app-card-art.solar .p-earth {
+      width: 10px;
+      height: 10px;
+      background: #4f9cff;
+      box-shadow: 0 0 8px #4f9cff;
+      top: 28%;
+      right: 28%;
+    }
+    .app-card-art.solar .p-mars {
+      width: 7px;
+      height: 7px;
+      background: #e07a4f;
+      bottom: 30%;
+      left: 26%;
+    }
+    .app-card-art.solar .p-jup {
+      width: 14px;
+      height: 14px;
+      background: #d4a574;
+      top: 42%;
+      left: 14%;
+    }
+
+    .app-card-art.powder {
+      background: linear-gradient(160deg, #0a1a12 0%, #051008 100%);
+      gap: 4px;
+      flex-wrap: wrap;
+      padding: 18px 24px;
+    }
+    .app-card-art.powder .grain {
+      width: 8px;
+      height: 8px;
+      border-radius: 1px;
+    }
+
+    .app-card-body {
+      padding: 12px 14px 14px;
+      border-top: 2px solid rgba(0, 255, 159, 0.25);
+    }
+    .app-card-body h3 {
+      margin: 0 0 8px;
+      font-size: 11px;
+      color: #ffcc00;
+      text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+    }
+    .app-card-body p {
+      margin: 0;
+      font-size: 8px;
+      color: #88aa99;
+      line-height: 1.55;
+    }
+    .app-card-cta {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 9px;
+      color: #00ff9f;
+    }
+    .app-card:hover .app-card-cta {
+      color: #ffcc00;
+    }
+
     @media (min-width: 768px) {
       body { padding: 20px; }
       .cards-toolbar {
@@ -465,6 +584,52 @@
     </div>
 
     <div class="visitors">VISITORS: 1337</div>
+
+    <div class="section" id="lounge-apps">
+      <h2>THE LOUNGE</h2>
+      <p class="old-school">Click a card to open &mdash; interactive apps &amp; models</p>
+
+      <div class="lounge-apps">
+        <a class="app-card" href="solar.html" aria-label="Open interactive Solar System">
+          <div class="app-card-art solar" aria-hidden="true">
+            <span class="orbit" style="width:48px;height:48px"></span>
+            <span class="orbit" style="width:74px;height:74px"></span>
+            <span class="orbit" style="width:100px;height:100px"></span>
+            <span class="sun"></span>
+            <span class="planet p-earth"></span>
+            <span class="planet p-mars"></span>
+            <span class="planet p-jup"></span>
+          </div>
+          <div class="app-card-body">
+            <h3>SOLAR SYSTEM</h3>
+            <p>Interactive 3D-style model of the Sun, planets &amp; moons. Click bodies for facts. Zoom, pan, follow orbits.</p>
+            <span class="app-card-cta">OPEN MODEL →</span>
+          </div>
+        </a>
+
+        <a class="app-card" href="powder.html" aria-label="Open Powder Sandbox">
+          <div class="app-card-art powder" aria-hidden="true">
+            <span class="grain" style="background:#3d8bfd"></span>
+            <span class="grain" style="background:#c9a227"></span>
+            <span class="grain" style="background:#e85d04"></span>
+            <span class="grain" style="background:#6c757d"></span>
+            <span class="grain" style="background:#2d6a4f"></span>
+            <span class="grain" style="background:#90e0ef"></span>
+            <span class="grain" style="background:#3d8bfd"></span>
+            <span class="grain" style="background:#c9a227"></span>
+            <span class="grain" style="background:#e85d04"></span>
+            <span class="grain" style="background:#adb5bd"></span>
+            <span class="grain" style="background:#40916c"></span>
+            <span class="grain" style="background:#48cae4"></span>
+          </div>
+          <div class="app-card-body">
+            <h3>POWDER SANDBOX</h3>
+            <p>Falling-sand physics toy. Drop elements, mix matter, mess around.</p>
+            <span class="app-card-cta">PLAY →</span>
+          </div>
+        </a>
+      </div>
+    </div>
 
     <div class="section" id="cards-section">
       <h2>ILLUMINATI CARDS</h2>

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar System — The Lounge | glmontherun.com</title>
+  <style>
+    :root {
+      --bg: #05060f;
+      --panel: rgba(12, 16, 32, 0.88);
+      --border: rgba(120, 160, 255, 0.22);
+      --text: #e8eeff;
+      --muted: #8b97b8;
+      --accent: #6ea8ff;
+      --accent-soft: rgba(110, 168, 255, 0.15);
+      --danger: #ff7b72;
+      --ok: #3dd68c;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+      --radius: 16px;
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+    }
+
+    #space {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    #space.dragging { cursor: grabbing; }
+    #space.hover-body { cursor: pointer; }
+
+    .ui {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .ui > * { pointer-events: auto; }
+
+    .top-bar {
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      max-width: min(420px, 100%);
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #6ea8ff;
+      text-decoration: none;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+      opacity: 1;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .controls {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: min(300px, 100%);
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      min-width: 72px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--accent-soft);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      background: rgba(110, 168, 255, 0.28);
+      border-color: rgba(120, 160, 255, 0.45);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn.active {
+      background: rgba(110, 168, 255, 0.35);
+      border-color: var(--accent);
+    }
+
+    .btn.icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      min-width: 120px;
+      accent-color: var(--accent);
+    }
+
+    .speed-val {
+      font-variant-numeric: tabular-nums;
+      font-size: 0.78rem;
+      color: var(--accent);
+      min-width: 48px;
+      text-align: right;
+    }
+
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .info-panel {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      width: min(360px, calc(100vw - 32px));
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      padding: 18px;
+      z-index: 10;
+      transform: translateY(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .info-panel.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .info-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      box-shadow: 0 0 18px currentColor;
+      flex-shrink: 0;
+    }
+
+    .info-header h2 {
+      font-size: 1.2rem;
+      font-weight: 650;
+    }
+
+    .info-header .type {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .close-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .fact {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .fact .k {
+      display: block;
+      color: var(--muted);
+      font-size: 0.7rem;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .fact .v {
+      font-size: 0.9rem;
+      font-weight: 560;
+    }
+
+    .blurb {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .hint {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      z-index: 10;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      max-width: min(340px, calc(100vw - 32px));
+      line-height: 1.45;
+    }
+
+    .hint kbd {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 5px;
+      padding: 1px 6px;
+      font-size: 0.7rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .legend {
+      position: fixed;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      z-index: 10;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .legend.visible { display: flex; }
+
+    .legend-title {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 5px 6px;
+      border-radius: 8px;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .legend-item:hover { background: rgba(255, 255, 255, 0.06); }
+    .legend-item.selected { background: var(--accent-soft); }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 720px) {
+      .top-bar { flex-direction: column; align-items: stretch; }
+      .controls { width: 100%; }
+      .hint { display: none; }
+      .legend { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="space"></canvas>
+
+  <div class="ui top-bar">
+    <div class="brand">
+      <a class="back-link" href="/">← Back to The Lounge</a>
+      <h1>Solar System</h1>
+      <p>Interactive model of the Sun and planets. Click a body for facts. Distances and sizes are stylized for clarity.</p>
+    </div>
+    <div class="controls">
+      <div class="row">
+        <button class="btn icon" id="btnPlay" title="Play / Pause">⏸</button>
+        <button class="btn icon" id="btnReset" title="Reset view">⌂</button>
+        <button class="btn icon" id="btnFollow" title="Follow selection">◎</button>
+        <button class="btn" id="btnLegend">Bodies</button>
+      </div>
+      <div class="row">
+        <label for="speed">Speed</label>
+        <input type="range" id="speed" min="0" max="100" value="35" />
+        <span class="speed-val" id="speedVal">1.0×</span>
+      </div>
+      <div class="toggles">
+        <button class="btn active" id="togOrbits" data-on="1">Orbits</button>
+        <button class="btn active" id="togLabels" data-on="1">Labels</button>
+        <button class="btn active" id="togMoons" data-on="1">Moons</button>
+        <button class="btn active" id="togAsteroids" data-on="1">Asteroids</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend" id="legend">
+    <div class="legend-title">Jump to body</div>
+  </div>
+
+  <div class="hint">
+    <kbd>Drag</kbd> pan · <kbd>Scroll</kbd> zoom · <kbd>Click</kbd> select ·
+    <kbd>Space</kbd> pause · <kbd>R</kbd> reset · <kbd>F</kbd> follow
+  </div>
+
+  <div class="info-panel" id="infoPanel">
+    <div class="info-header">
+      <div class="swatch" id="infoSwatch"></div>
+      <div>
+        <h2 id="infoName">—</h2>
+        <div class="type" id="infoType">—</div>
+      </div>
+      <button class="close-btn" id="infoClose" title="Close">×</button>
+    </div>
+    <div class="facts" id="infoFacts"></div>
+    <p class="blurb" id="infoBlurb"></p>
+  </div>
+
+  <script>
+    // ─── Data (stylized scale for visibility) ───────────────────────────────
+    const BODIES = [
+      {
+        id: "sun", name: "Sun", type: "Star",
+        color: "#ffcc33", glow: "#ffaa00",
+        radius: 28, orbit: 0, period: 0, tilt: 0, angle0: 0,
+        facts: {
+          "Diameter": "1.39 million km",
+          "Mass": "1.989 × 10³⁰ kg",
+          "Temp (surface)": "5,500 °C",
+          "Age": "~4.6 billion yr",
+        },
+        blurb: "A G-type main-sequence star holding 99.86% of the solar system's mass. Nuclear fusion in its core powers nearly all energy we experience on Earth.",
+      },
+      {
+        id: "mercury", name: "Mercury", type: "Terrestrial planet",
+        color: "#b1b1b1", glow: "#8a8a8a",
+        radius: 3.2, orbit: 55, period: 0.24, tilt: 0.03, angle0: 0.4,
+        facts: {
+          "Diameter": "4,880 km",
+          "Day length": "176 Earth days",
+          "Year": "88 Earth days",
+          "Moons": "0",
+        },
+        blurb: "The smallest planet and closest to the Sun. Extreme temperature swings and a heavily cratered surface make it resemble our Moon.",
+      },
+      {
+        id: "venus", name: "Venus", type: "Terrestrial planet",
+        color: "#e8c97a", glow: "#c9a84c",
+        radius: 5.2, orbit: 78, period: 0.62, tilt: 3.1, angle0: 1.8,
+        facts: {
+          "Diameter": "12,104 km",
+          "Day length": "243 Earth days",
+          "Year": "225 Earth days",
+          "Atmosphere": "CO₂ (thick)",
+        },
+        blurb: "Earth's 'sister planet' by size, but with a runaway greenhouse climate — surface hot enough to melt lead, blanketed in sulfuric acid clouds.",
+      },
+      {
+        id: "earth", name: "Earth", type: "Terrestrial planet",
+        color: "#4f9cff", glow: "#2d6fd4",
+        radius: 5.5, orbit: 105, period: 1.0, tilt: 0.41, angle0: 0.0,
+        facts: {
+          "Diameter": "12,742 km",
+          "Day length": "24 hours",
+          "Year": "365.25 days",
+          "Moons": "1 (Luna)",
+        },
+        blurb: "The only known world with life. Liquid water, a protective magnetic field, and a temperate atmosphere make it uniquely habitable.",
+        moons: [
+          { name: "Moon", color: "#c8cdd8", radius: 1.5, orbit: 12, period: 0.075 },
+        ],
+      },
+      {
+        id: "mars", name: "Mars", type: "Terrestrial planet",
+        color: "#e07a4f", glow: "#c45a32",
+        radius: 4.0, orbit: 140, period: 1.88, tilt: 0.44, angle0: 2.5,
+        facts: {
+          "Diameter": "6,779 km",
+          "Day length": "24.6 hours",
+          "Year": "687 Earth days",
+          "Moons": "2 (Phobos, Deimos)",
+        },
+        blurb: "The Red Planet. Home to the solar system's tallest volcano (Olympus Mons) and deepest canyon (Valles Marineris). A top target for exploration.",
+        moons: [
+          { name: "Phobos", color: "#9a8f86", radius: 0.9, orbit: 8, period: 0.03 },
+          { name: "Deimos", color: "#8a8078", radius: 0.7, orbit: 11, period: 0.05 },
+        ],
+      },
+      {
+        id: "jupiter", name: "Jupiter", type: "Gas giant",
+        color: "#d4a574", glow: "#b8844f",
+        radius: 14, orbit: 210, period: 11.86, tilt: 0.05, angle0: 0.9,
+        facts: {
+          "Diameter": "139,820 km",
+          "Day length": "9.9 hours",
+          "Year": "12 Earth years",
+          "Moons": "95+",
+        },
+        blurb: "The largest planet — a failed star of hydrogen and helium with a famous Great Red Spot storm larger than Earth that has raged for centuries.",
+        bands: true,
+        moons: [
+          { name: "Io", color: "#f0d060", radius: 1.4, orbit: 22, period: 0.05 },
+          { name: "Europa", color: "#c8d4e8", radius: 1.3, orbit: 28, period: 0.08 },
+          { name: "Ganymede", color: "#a8a090", radius: 1.6, orbit: 35, period: 0.12 },
+          { name: "Callisto", color: "#6a6a70", radius: 1.5, orbit: 42, period: 0.18 },
+        ],
+      },
+      {
+        id: "saturn", name: "Saturn", type: "Gas giant",
+        color: "#f0d9a0", glow: "#d4b878",
+        radius: 11.5, orbit: 280, period: 29.46, tilt: 0.47, angle0: 3.8,
+        facts: {
+          "Diameter": "116,460 km",
+          "Day length": "10.7 hours",
+          "Year": "29 Earth years",
+          "Rings": "Yes (iconic)",
+        },
+        blurb: "Famed for its spectacular ring system of ice and rock. Less dense than water — it would float in a sufficiently large bathtub.",
+        rings: { inner: 1.4, outer: 2.35 },
+        moons: [
+          { name: "Titan", color: "#e0a060", radius: 1.5, orbit: 30, period: 0.16 },
+        ],
+      },
+      {
+        id: "uranus", name: "Uranus", type: "Ice giant",
+        color: "#7ec8e3", glow: "#4aa8c8",
+        radius: 8, orbit: 340, period: 84.01, tilt: 1.71, angle0: 1.2,
+        facts: {
+          "Diameter": "50,724 km",
+          "Day length": "17.2 hours",
+          "Year": "84 Earth years",
+          "Axial tilt": "98° (sideways)",
+        },
+        blurb: "An ice giant that rolls on its side — its extreme axial tilt likely came from a giant ancient collision. Pale cyan from methane in the atmosphere.",
+        rings: { inner: 1.3, outer: 1.7, faint: true },
+      },
+      {
+        id: "neptune", name: "Neptune", type: "Ice giant",
+        color: "#4169e1", glow: "#2a4ab8",
+        radius: 7.6, orbit: 395, period: 164.8, tilt: 0.49, angle0: 4.5,
+        facts: {
+          "Diameter": "49,244 km",
+          "Day length": "16.1 hours",
+          "Year": "165 Earth years",
+          "Winds": "Up to 2,100 km/h",
+        },
+        blurb: "The farthest major planet. Deep blue methane skies hide the strongest winds in the solar system and a dynamic stormy atmosphere.",
+        moons: [
+          { name: "Triton", color: "#a0b8c8", radius: 1.3, orbit: 16, period: 0.14 },
+        ],
+      },
+      {
+        id: "pluto", name: "Pluto", type: "Dwarf planet",
+        color: "#c4a882", glow: "#a08868",
+        radius: 2.4, orbit: 450, period: 248, tilt: 2.1, angle0: 5.5,
+        facts: {
+          "Diameter": "2,377 km",
+          "Day length": "6.4 Earth days",
+          "Year": "248 Earth years",
+          "Moons": "5 (incl. Charon)",
+        },
+        blurb: "Reclassified as a dwarf planet in 2006, Pluto remains a fascinating icy world with mountains of water ice and a heart-shaped nitrogen glacier.",
+      },
+    ];
+
+    // ─── State ──────────────────────────────────────────────────────────────
+    const canvas = document.getElementById("space");
+    const ctx = canvas.getContext("2d");
+
+    const state = {
+      w: 0, h: 0, dpr: 1,
+      camX: 0, camY: 0, zoom: 1,
+      targetZoom: 1,
+      dragging: false,
+      lastX: 0, lastY: 0,
+      simTime: 0, // days (Earth days as unit)
+      lastFrame: 0,
+      paused: false,
+      speed: 1.0, // Earth years per real second at mid slider roughly
+      showOrbits: true,
+      showLabels: true,
+      showMoons: true,
+      showAsteroids: true,
+      selected: null,
+      follow: false,
+      hoverId: null,
+      stars: [],
+      asteroids: [],
+      angles: {}, // body id -> current angle
+    };
+
+    // Init angles
+    for (const b of BODIES) {
+      state.angles[b.id] = b.angle0;
+      if (b.moons) {
+        b.moons.forEach((m, i) => {
+          state.angles[`${b.id}:${m.name}`] = i * 1.7;
+        });
+      }
+    }
+
+    // ─── Stars & asteroids ──────────────────────────────────────────────────
+    function initStars() {
+      state.stars = [];
+      for (let i = 0; i < 350; i++) {
+        state.stars.push({
+          x: Math.random() * 4000 - 2000,
+          y: Math.random() * 4000 - 2000,
+          r: Math.random() * 1.4 + 0.2,
+          a: Math.random() * 0.6 + 0.2,
+          tw: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+
+    function initAsteroids() {
+      state.asteroids = [];
+      const inner = 160, outer = 190;
+      for (let i = 0; i < 280; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = inner + Math.random() * (outer - inner);
+        state.asteroids.push({
+          a, r,
+          size: Math.random() * 1.2 + 0.3,
+          speed: (0.8 + Math.random() * 0.4) / 4.0, // period ~4 yr-ish
+          shade: 0.35 + Math.random() * 0.45,
+        });
+      }
+    }
+
+    // ─── Layout ─────────────────────────────────────────────────────────────
+    function resize() {
+      state.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      state.w = window.innerWidth;
+      state.h = window.innerHeight;
+      canvas.width = Math.floor(state.w * state.dpr);
+      canvas.height = Math.floor(state.h * state.dpr);
+      canvas.style.width = state.w + "px";
+      canvas.style.height = state.h + "px";
+      ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+    }
+
+    // ─── Coordinate helpers ─────────────────────────────────────────────────
+    function worldToScreen(wx, wy) {
+      return {
+        x: state.w / 2 + (wx - state.camX) * state.zoom,
+        y: state.h / 2 + (wy - state.camY) * state.zoom,
+      };
+    }
+
+    function screenToWorld(sx, sy) {
+      return {
+        x: state.camX + (sx - state.w / 2) / state.zoom,
+        y: state.camY + (sy - state.h / 2) / state.zoom,
+      };
+    }
+
+    function bodyPosition(body) {
+      if (body.orbit === 0) return { x: 0, y: 0 };
+      const ang = state.angles[body.id];
+      return {
+        x: Math.cos(ang) * body.orbit,
+        y: Math.sin(ang) * body.orbit * 0.55, // slight ellipse for depth
+      };
+    }
+
+    function moonPosition(parent, moon) {
+      const p = bodyPosition(parent);
+      const ang = state.angles[`${parent.id}:${moon.name}`];
+      return {
+        x: p.x + Math.cos(ang) * moon.orbit,
+        y: p.y + Math.sin(ang) * moon.orbit * 0.7,
+      };
+    }
+
+    // ─── Hit testing ────────────────────────────────────────────────────────
+    function pickBody(sx, sy) {
+      const hits = [];
+      for (const b of BODIES) {
+        const p = bodyPosition(b);
+        const s = worldToScreen(p.x, p.y);
+        const r = Math.max(b.radius * state.zoom, 8);
+        const dx = sx - s.x, dy = sy - s.y;
+        if (dx * dx + dy * dy <= r * r * 1.4) {
+          hits.push({ id: b.id, body: b, dist: dx * dx + dy * dy });
+        }
+        if (state.showMoons && b.moons) {
+          for (const m of b.moons) {
+            const mp = moonPosition(b, m);
+            const ms = worldToScreen(mp.x, mp.y);
+            const mr = Math.max(m.radius * state.zoom, 5);
+            const mdx = sx - ms.x, mdy = sy - ms.y;
+            if (mdx * mdx + mdy * mdy <= mr * mr * 1.5) {
+              hits.push({
+                id: `${b.id}:${m.name}`,
+                body: {
+                  id: `${b.id}:${m.name}`,
+                  name: m.name,
+                  type: `Moon of ${b.name}`,
+                  color: m.color,
+                  glow: m.color,
+                  facts: {
+                    "Parent": b.name,
+                    "Type": "Natural satellite",
+                    "Orbit radius": "stylized",
+                    "In model": "Visible",
+                  },
+                  blurb: `${m.name} orbits ${b.name}. Size and distance are stylized for the interactive model.`,
+                },
+                dist: mdx * mdx + mdy * mdy,
+              });
+            }
+          }
+        }
+      }
+      hits.sort((a, b) => a.dist - b.dist);
+      return hits[0] || null;
+    }
+
+    // ─── Drawing ────────────────────────────────────────────────────────────
+    function drawBackground() {
+      const g = ctx.createRadialGradient(
+        state.w * 0.5, state.h * 0.45, 0,
+        state.w * 0.5, state.h * 0.5, Math.max(state.w, state.h) * 0.75
+      );
+      g.addColorStop(0, "#0c1230");
+      g.addColorStop(0.45, "#070a18");
+      g.addColorStop(1, "#03040a");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, state.w, state.h);
+
+      // stars (parallax lightly with camera)
+      const t = performance.now() * 0.001;
+      for (const s of state.stars) {
+        const px = state.w / 2 + (s.x - state.camX * 0.08) * (0.15 + state.zoom * 0.05);
+        const py = state.h / 2 + (s.y - state.camY * 0.08) * (0.15 + state.zoom * 0.05);
+        if (px < -5 || py < -5 || px > state.w + 5 || py > state.h + 5) continue;
+        const tw = 0.65 + 0.35 * Math.sin(t * 1.5 + s.tw);
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(230, 240, 255, ${s.a * tw})`;
+        ctx.arc(px, py, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawOrbits() {
+      if (!state.showOrbits) return;
+      ctx.save();
+      for (const b of BODIES) {
+        if (b.orbit === 0) continue;
+        const center = worldToScreen(0, 0);
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(140, 170, 255, 0.14)";
+        ctx.lineWidth = 1;
+        ctx.ellipse(
+          center.x, center.y,
+          b.orbit * state.zoom,
+          b.orbit * 0.55 * state.zoom,
+          0, 0, Math.PI * 2
+        );
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawAsteroids() {
+      if (!state.showAsteroids) return;
+      for (const a of state.asteroids) {
+        const ang = a.a + state.simTime * (Math.PI * 2) / (a.speed * 365.25);
+        const x = Math.cos(ang) * a.r;
+        const y = Math.sin(ang) * a.r * 0.55;
+        const s = worldToScreen(x, y);
+        if (s.x < -10 || s.y < -10 || s.x > state.w + 10 || s.y > state.h + 10) continue;
+        const size = Math.max(a.size * state.zoom, 0.5);
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(180, 170, 150, ${a.shade})`;
+        ctx.arc(s.x, s.y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawBody(body, pos, isMoon = false) {
+      const s = worldToScreen(pos.x, pos.y);
+      const r = Math.max(body.radius * state.zoom, isMoon ? 1.2 : 2);
+
+      // selection ring
+      if (state.selected === body.id || (state.selected && state.selected.startsWith(body.id + ":"))) {
+        // handled below via selected id match
+      }
+      const selected = state.selected === body.id;
+
+      if (selected) {
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.arc(s.x, s.y, r + 6, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // rings behind (for Saturn/Uranus)
+      if (body.rings) {
+        drawRings(s.x, s.y, r, body.rings, body.color, true);
+      }
+
+      // glow
+      if (!isMoon) {
+        const glowR = r * (body.id === "sun" ? 2.8 : 1.8);
+        const gg = ctx.createRadialGradient(s.x, s.y, r * 0.2, s.x, s.y, glowR);
+        if (body.id === "sun") {
+          gg.addColorStop(0, "rgba(255, 200, 60, 0.55)");
+          gg.addColorStop(0.4, "rgba(255, 140, 20, 0.2)");
+          gg.addColorStop(1, "rgba(255, 100, 0, 0)");
+        } else {
+          gg.addColorStop(0, hexToRgba(body.glow || body.color, 0.35));
+          gg.addColorStop(1, hexToRgba(body.glow || body.color, 0));
+        }
+        ctx.beginPath();
+        ctx.fillStyle = gg;
+        ctx.arc(s.x, s.y, glowR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // sphere
+      const shade = ctx.createRadialGradient(
+        s.x - r * 0.35, s.y - r * 0.35, r * 0.1,
+        s.x, s.y, r
+      );
+      if (body.id === "sun") {
+        shade.addColorStop(0, "#fff6c8");
+        shade.addColorStop(0.45, "#ffcc33");
+        shade.addColorStop(1, "#e07010");
+      } else if (body.id === "earth") {
+        shade.addColorStop(0, "#8ec8ff");
+        shade.addColorStop(0.45, "#3d8aef");
+        shade.addColorStop(0.75, "#2a6d3a");
+        shade.addColorStop(1, "#1a3a60");
+      } else if (body.id === "jupiter") {
+        shade.addColorStop(0, "#f0d0a8");
+        shade.addColorStop(0.35, "#d4a574");
+        shade.addColorStop(0.55, "#c48850");
+        shade.addColorStop(0.75, "#e8c090");
+        shade.addColorStop(1, "#8a6038");
+      } else {
+        shade.addColorStop(0, lighten(body.color, 0.35));
+        shade.addColorStop(0.55, body.color);
+        shade.addColorStop(1, darken(body.color, 0.45));
+      }
+
+      ctx.beginPath();
+      ctx.fillStyle = shade;
+      ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Jupiter bands
+      if (body.bands && r > 6) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.globalAlpha = 0.25;
+        for (let i = -3; i <= 3; i++) {
+          ctx.fillStyle = i % 2 === 0 ? "#8a6038" : "#f0d0a8";
+          ctx.fillRect(s.x - r, s.y + i * r * 0.22 - r * 0.08, r * 2, r * 0.12);
+        }
+        // red spot
+        ctx.globalAlpha = 0.45;
+        ctx.fillStyle = "#c05030";
+        ctx.beginPath();
+        ctx.ellipse(s.x + r * 0.3, s.y + r * 0.15, r * 0.22, r * 0.12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // rings in front
+      if (body.rings) {
+        drawRings(s.x, s.y, r, body.rings, body.color, false);
+      }
+
+      // label
+      if (state.showLabels && !isMoon && state.zoom > 0.35) {
+        ctx.font = `${Math.max(11, Math.min(13, 11 + state.zoom))}px ${getComputedStyle(document.body).fontFamily}`;
+        ctx.fillStyle = "rgba(220, 230, 255, 0.85)";
+        ctx.textAlign = "center";
+        ctx.fillText(body.name, s.x, s.y + r + 14);
+      }
+
+      return { sx: s.x, sy: s.y, r };
+    }
+
+    function drawRings(cx, cy, r, rings, color, behind) {
+      const a = -0.35;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(a);
+      ctx.scale(1, 0.32);
+      const inner = r * rings.inner;
+      const outer = r * rings.outer;
+      // only draw half depending on behind/front
+      ctx.beginPath();
+      if (behind) {
+        ctx.arc(0, 0, outer, Math.PI, 0, false);
+        ctx.arc(0, 0, inner, 0, Math.PI, true);
+      } else {
+        ctx.arc(0, 0, outer, 0, Math.PI, false);
+        ctx.arc(0, 0, inner, Math.PI, 0, true);
+      }
+      ctx.closePath();
+      const alpha = rings.faint ? 0.25 : 0.45;
+      ctx.fillStyle = hexToRgba(color, alpha);
+      ctx.fill();
+      if (!rings.faint) {
+        ctx.strokeStyle = hexToRgba(color, 0.2);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(0, 0, (inner + outer) / 2, behind ? Math.PI : 0, behind ? 0 : Math.PI);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function hexToRgba(hex, a) {
+      const h = hex.replace("#", "");
+      const full = h.length === 3 ? h.split("").map(c => c + c).join("") : h;
+      const n = parseInt(full, 16);
+      const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    function lighten(hex, amt) {
+      const h = hex.replace("#", "");
+      const full = h.length === 3 ? h.split("").map(c => c + c).join("") : h;
+      let r = (parseInt(full, 16) >> 16) & 255;
+      let g = (parseInt(full, 16) >> 8) & 255;
+      let b = parseInt(full, 16) & 255;
+      r = Math.min(255, Math.round(r + (255 - r) * amt));
+      g = Math.min(255, Math.round(g + (255 - g) * amt));
+      b = Math.min(255, Math.round(b + (255 - b) * amt));
+      return `rgb(${r},${g},${b})`;
+    }
+
+    function darken(hex, amt) {
+      const h = hex.replace("#", "");
+      const full = h.length === 3 ? h.split("").map(c => c + c).join("") : h;
+      let r = (parseInt(full, 16) >> 16) & 255;
+      let g = (parseInt(full, 16) >> 8) & 255;
+      let b = parseInt(full, 16) & 255;
+      r = Math.round(r * (1 - amt));
+      g = Math.round(g * (1 - amt));
+      b = Math.round(b * (1 - amt));
+      return `rgb(${r},${g},${b})`;
+    }
+
+    // ─── Simulation ─────────────────────────────────────────────────────────
+    function update(dt) {
+      // zoom smooth
+      state.zoom += (state.targetZoom - state.zoom) * Math.min(1, dt * 8);
+
+      if (!state.paused) {
+        // speed: slider maps to years/sec scale
+        // period is in Earth years; advance angle by 2π * (years elapsed / period)
+        const yearsPerSec = state.speed; // at speed 1 → 1 Earth year / real second for Earth
+        const dy = yearsPerSec * dt;
+        state.simTime += dy * 365.25;
+
+        for (const b of BODIES) {
+          if (b.period > 0) {
+            state.angles[b.id] += (Math.PI * 2) * (dy / b.period);
+          }
+          if (b.moons) {
+            for (const m of b.moons) {
+              const key = `${b.id}:${m.name}`;
+              state.angles[key] += (Math.PI * 2) * (dy / m.period);
+            }
+          }
+        }
+      }
+
+      if (state.follow && state.selected) {
+        const body = BODIES.find(b => b.id === state.selected);
+        if (body) {
+          const p = bodyPosition(body);
+          state.camX += (p.x - state.camX) * Math.min(1, dt * 4);
+          state.camY += (p.y - state.camY) * Math.min(1, dt * 4);
+        } else if (state.selected.includes(":")) {
+          const [pid, mname] = state.selected.split(":");
+          const parent = BODIES.find(b => b.id === pid);
+          const moon = parent && parent.moons && parent.moons.find(m => m.name === mname);
+          if (parent && moon) {
+            const p = moonPosition(parent, moon);
+            state.camX += (p.x - state.camX) * Math.min(1, dt * 4);
+            state.camY += (p.y - state.camY) * Math.min(1, dt * 4);
+          }
+        }
+      }
+    }
+
+    function render() {
+      drawBackground();
+      drawOrbits();
+      drawAsteroids();
+
+      // draw outer bodies first roughly by orbit (sun last for glow on top? actually sun first)
+      const sorted = [...BODIES].sort((a, b) => a.orbit - b.orbit);
+      for (const body of sorted) {
+        const pos = bodyPosition(body);
+        drawBody(body, pos, false);
+        if (state.showMoons && body.moons) {
+          for (const m of body.moons) {
+            const mp = moonPosition(body, m);
+            drawBody(
+              { id: `${body.id}:${m.name}`, name: m.name, color: m.color, radius: m.radius },
+              mp,
+              true
+            );
+          }
+        }
+      }
+    }
+
+    function frame(ts) {
+      if (!state.lastFrame) state.lastFrame = ts;
+      const dt = Math.min(0.05, (ts - state.lastFrame) / 1000);
+      state.lastFrame = ts;
+      update(dt);
+      render();
+      requestAnimationFrame(frame);
+    }
+
+    // ─── UI wiring ──────────────────────────────────────────────────────────
+    const infoPanel = document.getElementById("infoPanel");
+    const speedSlider = document.getElementById("speed");
+    const speedVal = document.getElementById("speedVal");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnFollow = document.getElementById("btnFollow");
+    const legend = document.getElementById("legend");
+
+    function speedFromSlider(v) {
+      // 0 → 0, 35 → 1, 100 → ~20 years/sec exponential-ish
+      if (v <= 0) return 0;
+      return Math.pow(v / 35, 1.6);
+    }
+
+    function applySpeed() {
+      state.speed = speedFromSlider(+speedSlider.value);
+      speedVal.textContent = state.speed < 0.1
+        ? state.speed.toFixed(2) + "×"
+        : state.speed.toFixed(1) + "×";
+      if (state.speed === 0) {
+        state.paused = true;
+        btnPlay.textContent = "▶";
+      }
+    }
+
+    function selectBody(id) {
+      state.selected = id;
+      const hit = BODIES.find(b => b.id === id);
+      let data = hit;
+      if (!data && id && id.includes(":")) {
+        const [pid, mname] = id.split(":");
+        const parent = BODIES.find(b => b.id === pid);
+        const moon = parent && parent.moons && parent.moons.find(m => m.name === mname);
+        if (moon) {
+          data = {
+            id,
+            name: moon.name,
+            type: `Moon of ${parent.name}`,
+            color: moon.color,
+            facts: {
+              "Parent": parent.name,
+              "Type": "Natural satellite",
+              "In model": "Visible",
+              "Note": "Stylized orbit",
+            },
+            blurb: `${moon.name} is a natural satellite of ${parent.name}. Orbit and size are stylized for clarity in this model.`,
+          };
+        }
+      }
+      if (!data) {
+        infoPanel.classList.remove("visible");
+        updateLegendSelection();
+        return;
+      }
+      document.getElementById("infoName").textContent = data.name;
+      document.getElementById("infoType").textContent = data.type;
+      const sw = document.getElementById("infoSwatch");
+      sw.style.background = data.color;
+      sw.style.color = data.color;
+      const factsEl = document.getElementById("infoFacts");
+      factsEl.innerHTML = "";
+      for (const [k, v] of Object.entries(data.facts || {})) {
+        const d = document.createElement("div");
+        d.className = "fact";
+        d.innerHTML = `<span class="k">${k}</span><span class="v">${v}</span>`;
+        factsEl.appendChild(d);
+      }
+      document.getElementById("infoBlurb").textContent = data.blurb || "";
+      infoPanel.classList.add("visible");
+      updateLegendSelection();
+    }
+
+    function updateLegendSelection() {
+      legend.querySelectorAll(".legend-item").forEach(el => {
+        el.classList.toggle("selected", el.dataset.id === state.selected);
+      });
+    }
+
+    function buildLegend() {
+      for (const b of BODIES) {
+        const btn = document.createElement("button");
+        btn.className = "legend-item";
+        btn.dataset.id = b.id;
+        btn.innerHTML = `<span class="legend-dot" style="background:${b.color}"></span>${b.name}`;
+        btn.addEventListener("click", () => {
+          selectBody(b.id);
+          const p = bodyPosition(b);
+          state.camX = p.x;
+          state.camY = p.y;
+          if (b.id === "sun") {
+            state.targetZoom = 1.2;
+          } else {
+            state.targetZoom = Math.min(4.5, Math.max(1.2, 80 / Math.max(b.radius, 3)));
+          }
+        });
+        legend.appendChild(btn);
+      }
+    }
+
+    function toggleBtn(el, flag) {
+      const on = el.dataset.on === "1";
+      el.dataset.on = on ? "0" : "1";
+      el.classList.toggle("active", !on);
+      state[flag] = !on;
+    }
+
+    // Events
+    speedSlider.addEventListener("input", applySpeed);
+
+    btnPlay.addEventListener("click", () => {
+      state.paused = !state.paused;
+      btnPlay.textContent = state.paused ? "▶" : "⏸";
+      if (!state.paused && state.speed === 0) {
+        speedSlider.value = 35;
+        applySpeed();
+      }
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      state.camX = 0;
+      state.camY = 0;
+      state.targetZoom = 1;
+      state.follow = false;
+      btnFollow.classList.remove("active");
+    });
+
+    btnFollow.addEventListener("click", () => {
+      if (!state.selected) return;
+      state.follow = !state.follow;
+      btnFollow.classList.toggle("active", state.follow);
+    });
+
+    document.getElementById("btnLegend").addEventListener("click", () => {
+      legend.classList.toggle("visible");
+    });
+
+    document.getElementById("togOrbits").addEventListener("click", e => toggleBtn(e.currentTarget, "showOrbits"));
+    document.getElementById("togLabels").addEventListener("click", e => toggleBtn(e.currentTarget, "showLabels"));
+    document.getElementById("togMoons").addEventListener("click", e => toggleBtn(e.currentTarget, "showMoons"));
+    document.getElementById("togAsteroids").addEventListener("click", e => toggleBtn(e.currentTarget, "showAsteroids"));
+    document.getElementById("infoClose").addEventListener("click", () => {
+      state.selected = null;
+      infoPanel.classList.remove("visible");
+      state.follow = false;
+      btnFollow.classList.remove("active");
+      updateLegendSelection();
+    });
+
+    canvas.addEventListener("pointerdown", e => {
+      state.dragging = true;
+      state.lastX = e.clientX;
+      state.lastY = e.clientY;
+      canvas.classList.add("dragging");
+      canvas.setPointerCapture(e.pointerId);
+      state._downX = e.clientX;
+      state._downY = e.clientY;
+      state._moved = false;
+    });
+
+    canvas.addEventListener("pointermove", e => {
+      if (state.dragging) {
+        const dx = e.clientX - state.lastX;
+        const dy = e.clientY - state.lastY;
+        if (Math.abs(e.clientX - state._downX) + Math.abs(e.clientY - state._downY) > 4) {
+          state._moved = true;
+          state.follow = false;
+          btnFollow.classList.remove("active");
+        }
+        state.camX -= dx / state.zoom;
+        state.camY -= dy / state.zoom;
+        state.lastX = e.clientX;
+        state.lastY = e.clientY;
+      } else {
+        const hit = pickBody(e.clientX, e.clientY);
+        state.hoverId = hit ? hit.id : null;
+        canvas.classList.toggle("hover-body", !!hit);
+      }
+    });
+
+    canvas.addEventListener("pointerup", e => {
+      state.dragging = false;
+      canvas.classList.remove("dragging");
+      if (!state._moved) {
+        const hit = pickBody(e.clientX, e.clientY);
+        if (hit) selectBody(hit.id);
+        else {
+          state.selected = null;
+          infoPanel.classList.remove("visible");
+          updateLegendSelection();
+        }
+      }
+    });
+
+    canvas.addEventListener("pointercancel", () => {
+      state.dragging = false;
+      canvas.classList.remove("dragging");
+    });
+
+    canvas.addEventListener("wheel", e => {
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 0.9 : 1.1;
+      const before = screenToWorld(e.clientX, e.clientY);
+      state.targetZoom = Math.min(12, Math.max(0.25, state.targetZoom * factor));
+      // zoom toward cursor after applying approx
+      const z = state.targetZoom;
+      state.camX = before.x - (e.clientX - state.w / 2) / z;
+      state.camY = before.y - (e.clientY - state.h / 2) / z;
+    }, { passive: false });
+
+    window.addEventListener("keydown", e => {
+      if (e.target.matches("input, textarea")) return;
+      if (e.code === "Space") {
+        e.preventDefault();
+        btnPlay.click();
+      } else if (e.key === "r" || e.key === "R") {
+        document.getElementById("btnReset").click();
+      } else if (e.key === "f" || e.key === "F") {
+        btnFollow.click();
+      } else if (e.key === "Escape") {
+        document.getElementById("infoClose").click();
+        legend.classList.remove("visible");
+      }
+    });
+
+    window.addEventListener("resize", resize);
+
+    // boot
+    resize();
+    initStars();
+    initAsteroids();
+    buildLegend();
+    applySpeed();
+    state.targetZoom = Math.min(1.1, (Math.min(state.w, state.h) / 900));
+    state.zoom = state.targetZoom;
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
