@@ -1,0 +1,60 @@
+{
+  "Unlimited": {
+    "year": 1995,
+    "family": "INWO",
+    "source": "https://www.sjgames.com/inwo/",
+    "note": "The 1995 Unlimited printing of Illuminati: New World Order. INWO originally debuted in 1994."
+  },
+  "Assassins": {
+    "year": 1995,
+    "family": "INWO",
+    "source": "https://www.sjgames.com/inwo/assassins/"
+  },
+  "Subgenius": {
+    "year": 1998,
+    "family": "INWO",
+    "label": "SubGenius",
+    "source": "https://www.sjgames.com/inwo/subgenius/"
+  },
+  "German": {
+    "year": null,
+    "family": "Translations",
+    "note": "German-language cards from the original archive. Individual printing years have not been verified."
+  },
+  "German 2": {
+    "year": null,
+    "family": "Translations",
+    "note": "German-language cards from the original archive. Individual printing years have not been verified."
+  },
+  "Virtual": {
+    "year": null,
+    "family": "Fan / virtual",
+    "note": "Virtual collection retained from the original archive; not presented as a verified retail edition."
+  },
+  "Fan": {
+    "year": null,
+    "family": "Fan / virtual",
+    "note": "Fan-created cards. These are not official Steve Jackson Games releases."
+  },
+  "Illuminati Y2K": {
+    "year": 1999,
+    "family": "Classic Illuminati",
+    "label": "Illuminati Y2K",
+    "source": "https://www.sjgames.com/illuminati/y2k/",
+    "note": "Expansion for classic Illuminati, a separate game from Illuminati: New World Order."
+  },
+  "Illuminati Bavarian Fire Drill": {
+    "year": 2007,
+    "family": "Classic Illuminati",
+    "label": "Bavarian Fire Drill",
+    "source": "https://www.sjgames.com/illuminati/bfd/",
+    "note": "Expansion for classic Illuminati, a separate game from Illuminati: New World Order."
+  },
+  "Illuminati 2020": {
+    "year": 2020,
+    "family": "Illuminati Second Edition",
+    "label": "Illuminati 2020",
+    "source": "https://www.sjgames.com/illuminati/2020/",
+    "note": "The 2020 expansion for Illuminati Second Edition. This is distinct from the later Classic adaptation."
+  }
+}

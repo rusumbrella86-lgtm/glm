@@ -1,15 +1,18 @@
 {
   "generatedAt": "2026-06-30T02:20:58.384Z",
-  "total": 768,
-  "withImages": 768,
+  "total": 778,
+  "withImages": 778,
   "sets": [
-    "Assassins",
-    "Fan",
-    "German",
-    "German 2",
     "Subgenius",
     "Unlimited",
-    "Virtual"
+    "Assassins",
+    "Fan",
+    "German 2",
+    "Virtual",
+    "German",
+    "Illuminati Y2K",
+    "Illuminati Bavarian Fire Drill",
+    "Illuminati 2020"
   ],
   "types": [
     "Assassination",
@@ -24,7 +27,8 @@
     "Personality",
     "Place",
     "Plot",
-    "Resource"
+    "Resource",
+    "Special"
   ],
   "cards": [
     {
@@ -17157,6 +17161,171 @@
         "german",
         "group"
       ]
+    },
+    {
+      "id": "church-of-the-subgenius-illuminati-y2k",
+      "name": "Church of the SubGenius",
+      "set": "Illuminati Y2K",
+      "year": 1999,
+      "type": "Illuminati",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/y2k-church-of-the-subgenius.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/y2k/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Y2K. Set illustration credits: John Grigni, Robi Mookerjee, Shea Ryan, Dan Smith. Individual card artist unverified."
+    },
+    {
+      "id": "flower-power-illuminati-y2k",
+      "name": "Flower Power",
+      "set": "Illuminati Y2K",
+      "year": 1999,
+      "type": "Special",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/y2k-flower-power.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/y2k/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Y2K. Set illustration credits: John Grigni, Robi Mookerjee, Shea Ryan, Dan Smith. Individual card artist unverified."
+    },
+    {
+      "id": "gamers-illuminati-y2k",
+      "name": "Gamers",
+      "set": "Illuminati Y2K",
+      "year": 1999,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/y2k-gamers.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/y2k/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Y2K. Set illustration credits: John Grigni, Robi Mookerjee, Shea Ryan, Dan Smith. Individual card artist unverified."
+    },
+    {
+      "id": "spammers-illuminati-y2k",
+      "name": "Spammers",
+      "set": "Illuminati Y2K",
+      "year": 1999,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/y2k-spammers.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/y2k/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Y2K. Set illustration credits: John Grigni, Robi Mookerjee, Shea Ryan, Dan Smith. Individual card artist unverified."
+    },
+    {
+      "id": "weapons-of-mass-distraction-illuminati-bavarian-fire-drill",
+      "name": "Weapons of Mass Distraction",
+      "set": "Illuminati Bavarian Fire Drill",
+      "year": 2007,
+      "type": "Special",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/bfd-weapons-of-mass-distraction.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/bfd/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Bavarian Fire Drill. Set illustration credits: Dan Smith, Greg Hyland, Alex Fernandez, Rick Harris, John Kovalic, Shea Ryan. Individual card artist unverified."
+    },
+    {
+      "id": "fema-illuminati-bavarian-fire-drill",
+      "name": "FEMA",
+      "set": "Illuminati Bavarian Fire Drill",
+      "year": 2007,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/bfd-fema.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/bfd/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Bavarian Fire Drill. Set illustration credits: Dan Smith, Greg Hyland, Alex Fernandez, Rick Harris, John Kovalic, Shea Ryan. Individual card artist unverified."
+    },
+    {
+      "id": "zero-tolerance-illuminati-bavarian-fire-drill",
+      "name": "Zero Tolerance",
+      "set": "Illuminati Bavarian Fire Drill",
+      "year": 2007,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/bfd-zero-tolerance.jpg",
+      "added": true,
+      "source": "https://www.sjgames.com/illuminati/bfd/cards.html",
+      "sourceLabel": "Publisher sample",
+      "notes": "Official sample from Illuminati Bavarian Fire Drill. Set illustration credits: Dan Smith, Greg Hyland, Alex Fernandez, Rick Harris, John Kovalic, Shea Ryan. Individual card artist unverified."
+    },
+    {
+      "id": "mask-designers-illuminati-2020",
+      "name": "Mask Designers",
+      "set": "Illuminati 2020",
+      "year": 2020,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/illuminati-2020-nine-cards.jpg",
+      "added": true,
+      "source": "https://m.naturebridge.kr/product/zoom.html?product_no=88712",
+      "sourceLabel": "Source photograph",
+      "notes": "Illustration: Lar deSouza. Shown from a complete card in the original product photograph.",
+      "imageRegion": {
+        "x": 0,
+        "y": 0,
+        "width": 500,
+        "height": 350,
+        "sourceWidth": 1500,
+        "sourceHeight": 1048
+      }
+    },
+    {
+      "id": "statue-smashers-illuminati-2020",
+      "name": "Statue Smashers",
+      "set": "Illuminati 2020",
+      "year": 2020,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/illuminati-2020-nine-cards.jpg",
+      "added": true,
+      "source": "https://m.naturebridge.kr/product/zoom.html?product_no=88712",
+      "sourceLabel": "Source photograph",
+      "notes": "Illustration: Lar deSouza. Shown from a complete card in the original product photograph.",
+      "imageRegion": {
+        "x": 500,
+        "y": 0,
+        "width": 500,
+        "height": 350,
+        "sourceWidth": 1500,
+        "sourceHeight": 1048
+      }
+    },
+    {
+      "id": "autonomous-zones-illuminati-2020",
+      "name": "Autonomous Zones",
+      "set": "Illuminati 2020",
+      "year": 2020,
+      "type": "Group",
+      "rarity": "",
+      "rarityLabel": "Not listed",
+      "image": "cards/illuminati-2020-nine-cards.jpg",
+      "added": true,
+      "source": "https://m.naturebridge.kr/product/zoom.html?product_no=88712",
+      "sourceLabel": "Source photograph",
+      "notes": "Illustration: Lar deSouza. Shown from a complete card in the original product photograph.",
+      "imageRegion": {
+        "x": 1000,
+        "y": 0,
+        "width": 500,
+        "height": 350,
+        "sourceWidth": 1500,
+        "sourceHeight": 1048
+      }
     }
-  ]
+  ],
+  "updatedAt": "2026-09-08T14:58:56.408Z"
 }

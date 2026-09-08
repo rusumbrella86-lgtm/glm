@@ -1,0 +1,36 @@
+Astropowder — source and credits
+
+The physics engine is The Powder Toy 100.1.400, by The Powder Toy contributors.
+Copyright (c) the respective contributors. Distributed under GNU GPL version 3.
+
+Official site: https://powdertoy.co.uk/
+Upstream source: https://github.com/The-Powder-Toy/The-Powder-Toy
+Release source: https://github.com/The-Powder-Toy/The-Powder-Toy/tree/v100.1.400
+Download the corresponding source: /engine/the-powder-toy-source.tar.gz
+License: /engine/LICENSE
+
+The unmodified WebAssembly binary and its generated JavaScript were obtained
+from https://powdertoy.co.uk/wasm/powder.wasm and powder.js on 2026-09-08.
+The C++ physics simulation has not been modified.
+
+Astropowder modifies the generated JavaScript only to:
+1. Install a local Lua bridge after the in-browser filesystem has initialized.
+2. Route native keyboard events to the engine canvas, preserving web form input.
+3. Preserve WebGL drawing buffers for the presentation renderer.
+4. Preserve the Astropowder page title.
+
+The readable bridge is at /engine/bridge.lua. It exposes the engine's real
+materials and wall tools and connects drawing, simulation controls and saves.
+The original element colours for a small group of natural materials are adjusted
+for presentation. The optional cinematic pass adds display shading and texture;
+it does not change particle interactions, resolution or physical accuracy.
+
+The Astropowder interface, engine adapter, cinematic shader and build files are
+also distributed under GPL-3.0. Download: /astropowder-source.zip
+Reproduce the build with Node.js 22.13+ and npm: npm ci && npm run build.
+The upstream archive includes the official engine build instructions. The engine
+is GPL software, provided without warranty; see the full license for terms.
+
+Astropowder is independent and is not affiliated with or endorsed by the
+original Powder Toy team. Materials use playful sandbox rules; the simulation
+is not a scientifically validated model for engineering or laboratory work.
