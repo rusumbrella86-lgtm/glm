@@ -3,6 +3,23 @@
 This folder contains the complete, prebuilt website for glmontherun.com.
 No npm installation or build step is needed on GitHub.
 
+## Flexbot channel signup
+
+The home-page Flexbot link opens `flexbot.html`. Its standalone styles and client
+are `assets/flexbot-signup.css` and `assets/flexbot-signup.js`; the home-page strip
+uses `assets/flexbot-home.css`. The existing Lounge application bundles are unchanged.
+
+Channel owners choose 1–7 days, accept the full-period commitment, and prove channel
+control with a temporary code in their public YouTube description. The hosted signup
+service creates the start and expiry times after successful verification. Visitors
+cannot cancel or shorten an active term, and expired terms do not renew automatically.
+Flexbot's separate Website channels dashboard manages the resulting enrollments.
+
+The public client calls `https://flexbot-channel-signup.mrflex420.chatgpt.site`.
+Pending verification credentials are kept only in the visitor's session storage and
+sent in request bodies. Bot feed credentials belong only in the service's secret
+configuration and the operator's local Flexbot data, never in this public repository.
+
 Upload EVERY file and subfolder here into the ROOT of the repository that hosts
 this website. index.html must be at the repository root, alongside assets/,
 cards/, data/, engine/, and fonts/. Do not upload the outer UPLOAD-TO-GITHUB folder.
