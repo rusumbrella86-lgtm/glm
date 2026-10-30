@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d0c">
-  <meta name="description" content="Bring Flexbot to your YouTube live chat. Verify your channel, choose 1–7 days, and write your own greetings and commands.">
+  <meta name="description" content="Customize Flexbot for your YouTube channel: 10 greetings, random or selected welcomes, personal @username greetings, and 10 commands. Settings stay saved for renewal.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://flexbot-channel-signup.mrflex420.chatgpt.site; base-uri 'none'; form-action 'none'">
   <title>Flexbot for your channel · The Lounge</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261030-owner1">
+  <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261030-update-info">
   <script type="module" src="/assets/flexbot-signup.js?v=20261030-owner1"></script>
 </head>
 <body>
@@ -22,6 +22,7 @@
       <p class="eyebrow"><span class="signal" aria-hidden="true"></span> YOUR CHANNEL. YOUR INVITATION.</p>
       <h1>A familiar hello.<br><span>In your live chat.</span></h1>
       <p class="intro-copy">Invite Flexbot to your YouTube channel. Choose your time, write your own welcomes, and give your community commands that feel like you.</p>
+      <a class="update-jump" href="#latest-update">New: your own greetings, commands, and saved settings <span aria-hidden="true">↓</span></a>
     </div>
     <div id="signup-layout" class="signup-layout">
       <section class="signup-panel" aria-labelledby="form-title">
@@ -86,6 +87,17 @@
         <fieldset id="command-settings" class="profile-section"><legend>Your custom commands <span id="command-count" class="item-count">0 / 10</span></legend><p class="section-copy">Choose a command and the text Flexbot replies with. Everyone in your chat can use enabled custom commands. Built-in commands keep the admin’s permissions and cannot be replaced here.</p><p class="help">Use <code>{user}</code>, <code>{channel}</code>, or <code>{query}</code> in a reply. Command names use 1–30 letters, numbers, underscores, or hyphens after <code>!</code>.</p><div id="command-list" class="profile-list"></div><button id="add-command" class="button secondary add-row" type="button">＋ Add command</button></fieldset>
         <div id="settings-save" class="profile-save"><div><strong id="save-state" role="status" aria-live="polite">All changes saved</strong><p class="help">Saved changes apply when Flexbot next syncs your active channel. Channel permissions, cooldowns, and Blocked Users still apply.</p></div><button id="save-profile" class="button primary" type="submit">Save my settings</button><button id="reload-profile" class="button secondary" type="button">Load saved settings</button></div>
       </form>
+    </section>
+    <section id="latest-update" class="latest-update" aria-labelledby="update-title">
+      <div class="update-heading"><div><p class="eyebrow">LATEST FLEXBOT UPDATE</p><h2 id="update-title">Your channel. Your settings.</h2></div><time datetime="2026-10-30">October 30, 2026</time></div>
+      <p class="update-intro">Channel owners can now manage their own greetings and commands right here, after verifying their YouTube channel.</p>
+      <div class="update-features">
+        <article><span class="feature-label">WELCOME MESSAGES</span><h3>Up to 10 greetings</h3><p>Write your own welcome messages. Pick one specific greeting or let Flexbot randomly choose from the greetings you enable.</p></article>
+        <article><span class="feature-label">PERSONAL GREETINGS</span><h3>A hello for @username</h3><p>Save up to 10 personal greetings for specific people. Their personal message replaces the general welcome, once per day in your channel.</p></article>
+        <article><span class="feature-label">CUSTOM COMMANDS</span><h3>Up to 10 commands</h3><p>Create commands such as <code>!socials</code>, write the replies, and set their cooldowns. You can enable or disable each command. Existing built-in commands keep their admin settings.</p></article>
+        <article><span class="feature-label">SAVED FOR YOUR RETURN</span><h3>Renew without starting over</h3><p>Choose 1–7 days when signing up. Bot access ends when that period expires, but your greetings and commands stay saved for your next signup unless the admin clears your expired signup and settings.</p></article>
+      </div>
+      <div class="update-next"><h3>How to get started</h3><p>New here? Choose <strong>Sign up or renew</strong> and verify your channel. Already signed up? Choose <strong>Manage my channel</strong> to open your private settings, including after expiry. Managing settings does not extend your signup.</p><p>Save your changes with <strong>Save my settings</strong>. Flexbot uses them after its next sync and joins your live chat during your active signup while the bot service is online. Channel permissions and Blocked Users still apply.</p><a class="update-return" href="#signup">Go to signup or your channel settings <span aria-hidden="true">↑</span></a></div>
     </section>
   </main>
   <footer class="signup-footer"><a href="/">THE LOUNGE · GLM</a><span>A little bot. A familiar welcome.</span></footer>
