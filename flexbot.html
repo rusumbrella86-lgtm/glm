@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d0c">
-  <meta name="description" content="Bring Flexbot to your YouTube live chat. Verify your channel and choose a 1–7 day signup.">
+  <meta name="description" content="Bring Flexbot to your YouTube live chat. Verify your channel, choose 1–7 days, and write your own greetings and commands.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://flexbot-channel-signup.mrflex420.chatgpt.site; base-uri 'none'; form-action 'none'">
   <title>Flexbot for your channel · The Lounge</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="/assets/flexbot-signup.css">
-  <script type="module" src="/assets/flexbot-signup.js"></script>
+  <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261030-owner1">
+  <script type="module" src="/assets/flexbot-signup.js?v=20261030-owner1"></script>
 </head>
 <body>
   <a class="skip-link" href="#signup">Skip to signup</a>
@@ -21,13 +21,15 @@
     <div class="signup-intro">
       <p class="eyebrow"><span class="signal" aria-hidden="true"></span> YOUR CHANNEL. YOUR INVITATION.</p>
       <h1>A familiar hello.<br><span>In your live chat.</span></h1>
-      <p class="intro-copy">Invite Flexbot to your YouTube channel for a little while. Pick your time, verify your channel, and let the bot meet you when you go live.</p>
+      <p class="intro-copy">Invite Flexbot to your YouTube channel. Choose your time, write your own welcomes, and give your community commands that feel like you.</p>
     </div>
-    <div class="signup-layout">
+    <div id="signup-layout" class="signup-layout">
       <section class="signup-panel" aria-labelledby="form-title">
         <div class="panel-top"><span class="bot-mark" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none"><path d="M14 4v4m-2-4h2M6 11a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11H6V11Zm0 3H3v5h3m16-5h3v5h-3M10 13v3m8-3v3m-8 3h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><p class="eyebrow">FLEXBOT CHANNEL SIGNUP</p><h2 id="form-title">Make room for your community.</h2></div></div>
         <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
         <p id="error" class="error" role="alert" hidden></p>
+        <div id="entry-actions" class="entry-actions" role="group" aria-label="Choose a Flexbot action"><button id="signup-mode" class="entry-choice selected" type="button" aria-pressed="true">Sign up or renew</button><button id="manage-mode" class="entry-choice" type="button" aria-pressed="false">Manage my channel</button></div>
+        <button id="open-saved" class="button secondary saved-access" type="button" hidden>Back to my saved settings</button>
         <form id="channel-form">
           <label for="channel">Your YouTube channel</label>
           <input id="channel" name="channel" type="text" autocomplete="off" placeholder="@yourchannel or a YouTube channel URL" maxlength="250" required aria-describedby="channel-help">
@@ -37,13 +39,20 @@
           <label class="consent"><input id="consent" type="checkbox" required><span>I control this channel and agree to a <strong id="consent-duration">1-day</strong> signup, including the full-period commitment above.</span></label>
           <button id="continue" class="button primary" type="submit">Continue to channel verification <span aria-hidden="true">→</span></button>
         </form>
+        <form id="manage-form" hidden>
+          <h3>Welcome back.</h3><p class="help manage-intro">Verify your channel to open its private settings, on this browser or a new one. This does not start, extend, or shorten a signup.</p>
+          <label for="manage-channel">Your YouTube channel</label><input id="manage-channel" type="text" autocomplete="off" maxlength="250" placeholder="@yourchannel or a YouTube channel URL" required>
+          <label class="consent manage-consent"><input id="manage-consent" type="checkbox" required><span>I control this channel and want to manage its greetings and commands.</span></label>
+          <button id="manage-continue" class="button primary" type="submit">Verify access to my settings →</button>
+        </form>
         <section id="verification" aria-labelledby="verification-title" hidden>
           <p class="step-label">STEP 2 OF 2</p><h3 id="verification-title">A quick check that it’s your channel.</h3>
           <div class="channel-summary"><span id="channel-name"></span><a id="channel-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">View channel ↗</a></div>
-          <ol class="verification-steps"><li>Open your channel’s profile settings in YouTube Studio.</li><li>Add this code as the first line of your public channel description, then publish the change.</li><li>Come back here and activate your signup. You can remove the code after verification.</li></ol>
+          <ol class="verification-steps"><li>Open your channel’s profile settings in YouTube Studio.</li><li>Add this code as the first line of your public channel description, then publish the change.</li><li id="proof-last-step">Come back here and activate your signup. You can remove the code after verification.</li></ol>
           <div class="proof-code"><code id="verification-code"></code><button type="button" id="copy-code" class="button secondary">Copy code</button></div>
           <p class="help" id="proof-expiry"></p>
-          <div class="term-note"><strong id="verification-term"></strong><p>This starts the full selected period. You cannot cancel or shorten it once activated.</p></div>
+          <div class="term-note"><strong id="verification-term"></strong><p id="verification-explanation">This starts the full selected period. You cannot cancel or shorten it once activated.</p></div>
+          <label class="consent"><input id="remember-access" type="checkbox"><span>Remember my private settings access on this browser. Leave this off on a shared computer.</span></label>
           <button id="verify" type="button" class="button primary">Verify &amp; activate Flexbot</button>
           <button id="start-over" type="button" class="text-button">Use a different channel or duration</button>
         </section>
@@ -58,8 +67,26 @@
         </section>
         <noscript><p class="error">Enable JavaScript to verify your channel and complete signup.</p></noscript>
       </section>
-      <aside class="signup-aside" aria-labelledby="how-title"><p class="eyebrow">A FEW THINGS TO KNOW</p><h2 id="how-title">Your invitation.<br>Your chosen time.</h2><div class="explainer"><span>01</span><div><h3>Only your channel</h3><p>A one-time code in your channel description confirms that you control it. We don’t ask for your YouTube password.</p></div></div><div class="explainer"><span>02</span><div><h3>Ready when you go live</h3><p>Flexbot watches for your live streams during your signup. It can greet viewers and respond using the operator’s enabled bot features.</p></div></div><div class="explainer"><span>03</span><div><h3>One day to one week</h3><p>Choose 1–7 consecutive days. Time keeps counting while you’re offline, and the signup ends automatically.</p></div></div><p class="availability-note">Your live chat must be available to the bot’s YouTube account. YouTube restrictions or the bot service being offline can delay participation.</p></aside>
+      <aside class="signup-aside" aria-labelledby="how-title"><p class="eyebrow">A FEW THINGS TO KNOW</p><h2 id="how-title">Your invitation.<br>Your own welcome.</h2><div class="explainer"><span>01</span><div><h3>Only your channel</h3><p>A one-time code in your channel description confirms that you control it. We don’t ask for your YouTube password.</p></div></div><div class="explainer"><span>02</span><div><h3>Make it yours</h3><p>Save up to 10 greetings, choose one or randomize your enabled messages, greet specific @usernames, and add up to 10 custom commands.</p></div></div><div class="explainer"><span>03</span><div><h3>Come back to your settings</h3><p>Choose 1–7 consecutive days. Expiry pauses your bot access; your settings stay saved for your next signup unless the admin clears them.</p></div></div><p class="availability-note">Your live chat must be available to the bot’s YouTube account. YouTube restrictions or the bot service being offline can delay participation. The admin’s message permissions and Blocked Users still apply.</p></aside>
     </div>
+    <section id="owner-panel" class="owner-panel" aria-labelledby="owner-title" hidden>
+      <div class="owner-heading"><div><p class="eyebrow">YOUR PRIVATE CHANNEL SETTINGS</p><h2 id="owner-title">Your channel, your voice.</h2><a id="owner-channel" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"></a></div><button id="forget-access" class="button secondary" type="button">Forget access on this browser</button></div>
+      <div class="owner-term"><div><strong id="owner-term-title"></strong><p id="owner-term-copy" class="help"></p></div><button id="renew" class="button secondary" type="button" hidden>Sign up again</button></div>
+      <p class="help retained-note">Your greetings and commands stay saved after your signup expires. Renewing for the same verified channel brings them back. Only the admin can clear the stored profile.</p>
+      <nav class="profile-jump" aria-label="Channel settings sections"><a href="#welcome-settings">Welcome messages</a><a href="#personal-settings">Personal greetings</a><a href="#command-settings">Custom commands</a><a href="#settings-save">Save settings ↓</a></nav>
+      <p id="owner-notice" class="notice" role="status" aria-live="polite" hidden></p><p id="owner-error" class="error" role="alert" hidden></p>
+      <div id="discard-confirmation" class="discard-confirmation" hidden><p>Load the saved settings and discard your unsaved edits?</p><div><button id="discard-confirm" class="button secondary" type="button">Discard edits and load</button><button id="discard-cancel" class="text-button" type="button">Keep editing</button></div></div>
+      <form id="profile-form">
+        <fieldset id="welcome-settings" class="profile-section"><legend>Your welcome messages <span id="greeting-count" class="item-count">0 / 10</span></legend><p class="section-copy">Write up to 10 greetings. Use <code>{user}</code> for the viewer’s name and <code>{channel}</code> for your channel.</p>
+          <label class="check-label section-toggle"><input id="greetings-enabled" type="checkbox">Enable general greetings</label>
+          <div class="profile-grid"><label for="greeting-mode">Greeting selection<select id="greeting-mode"><option value="fixed">Use one specific greeting</option><option value="random">Randomize enabled greetings</option></select></label><label id="selected-greeting-label" for="selected-greeting">Specific greeting<select id="selected-greeting"></select></label></div>
+          <p id="greeting-mode-help" class="help"></p><div id="greeting-list" class="profile-list"></div><button id="add-greeting" class="button secondary add-row" type="button">＋ Add greeting</button>
+        </fieldset>
+        <fieldset id="personal-settings" class="profile-section"><legend>Personal greetings <span id="personal-count" class="item-count">0 / 10</span></legend><p class="section-copy">Give specific people their own welcome using <code>@username</code>. A matching personal greeting replaces their general welcome, once per day in your channel. Matching ignores letter case and a leading @.</p><div id="personal-list" class="profile-list"></div><button id="add-personal" class="button secondary add-row" type="button">＋ Add personal greeting</button></fieldset>
+        <fieldset id="command-settings" class="profile-section"><legend>Your custom commands <span id="command-count" class="item-count">0 / 10</span></legend><p class="section-copy">Choose a command and the text Flexbot replies with. Everyone in your chat can use enabled custom commands. Built-in commands keep the admin’s permissions and cannot be replaced here.</p><p class="help">Use <code>{user}</code>, <code>{channel}</code>, or <code>{query}</code> in a reply. Command names use 1–30 letters, numbers, underscores, or hyphens after <code>!</code>.</p><div id="command-list" class="profile-list"></div><button id="add-command" class="button secondary add-row" type="button">＋ Add command</button></fieldset>
+        <div id="settings-save" class="profile-save"><div><strong id="save-state" role="status" aria-live="polite">All changes saved</strong><p class="help">Saved changes apply when Flexbot next syncs your active channel. Channel permissions, cooldowns, and Blocked Users still apply.</p></div><button id="save-profile" class="button primary" type="submit">Save my settings</button><button id="reload-profile" class="button secondary" type="button">Load saved settings</button></div>
+      </form>
+    </section>
   </main>
   <footer class="signup-footer"><a href="/">THE LOUNGE · GLM</a><span>A little bot. A familiar welcome.</span></footer>
 </body>

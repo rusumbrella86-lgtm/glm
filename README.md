@@ -16,8 +16,19 @@ cannot cancel or shorten an active term, and expired terms do not renew automati
 Flexbot's separate Website channels dashboard manages the resulting enrollments.
 
 The public client calls `https://flexbot-channel-signup.mrflex420.chatgpt.site`.
+After verification, owners can save up to 10 general greetings, choose a fixed
+greeting or random enabled greetings, add up to 10 @username personal greetings,
+and create up to 10 custom text commands. Manage my channel verifies a new
+description code to recover access without changing an active signup period.
+Saved settings belong to the canonical YouTube channel and survive expiry and
+renewal until the admin explicitly clears the expired signup and saved settings.
+
 Pending verification credentials are kept only in the visitor's session storage and
-sent in request bodies. Bot feed credentials belong only in the service's secret
+sent in request bodies. Owner access stays in session storage unless the visitor
+opts into Remember access on this browser, which uses local storage. Forget access
+removes it from that browser; it does not delete the owner's saved server settings.
+Owner credentials are sent only as Authorization headers, never in URLs.
+Bot feed credentials belong only in the service's secret
 configuration and the operator's local Flexbot data, never in this public repository.
 
 Upload EVERY file and subfolder here into the ROOT of the repository that hosts
