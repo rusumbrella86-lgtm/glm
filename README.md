@@ -5,9 +5,11 @@ No npm installation or build step is needed on GitHub.
 
 ## Flexbot channel signup
 
-The home-page Flexbot link opens `flexbot.html`. Its standalone styles and client
+The home-page Flexbot navigation tab and signup links open `flexbot.html`. Its standalone styles and client
 are `assets/flexbot-signup.css` and `assets/flexbot-signup.js`; the home-page strip
-uses `assets/flexbot-home.css`. The existing Lounge application bundles are unchanged.
+uses `assets/flexbot-home.css`. The active Lounge bundle includes the Flexbot navigation
+link on both Lounge and Card archive views. `index.html` selects the current bundle;
+older bundles remain available for previously cached pages.
 
 Channel owners choose 1–7 days, accept the full-period commitment, and prove channel
 control with a temporary code in their public YouTube description. The hosted signup
