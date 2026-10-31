@@ -1,3 +1,5 @@
+import { createDefaultWebsiteLm, validateWebsiteProfile, WEBSITE_LM_STYLES } from "./flexbot-profile.js?v=20261031-lm1";
+
 const API = "https://flexbot-channel-signup.mrflex420.chatgpt.site";
 const STORAGE_KEY = "glm.flexbot.signup.v1";
 const ACCESS_KEY = "glm.flexbot.owner.v1";
@@ -142,11 +144,7 @@ async function createChallenge(event, manage = false) {
 
 function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
 function validProfile(value) {
-  return value && value.version === 1 && typeof value.greetingsEnabled === "boolean" && ["fixed", "random"].includes(value.greetingMode) &&
-    ["greetings", "personalGreetings", "commands"].every(key => Array.isArray(value[key]) && value[key].length <= 10 && value[key].every(row => row && UUID.test(row.id || "") && typeof row.enabled === "boolean")) &&
-    value.greetings.every(row => typeof row.message === "string") && value.personalGreetings.every(row => typeof row.username === "string" && typeof row.message === "string") &&
-    value.commands.every(row => typeof row.name === "string" && typeof row.response === "string" && Number.isInteger(row.cooldownSeconds)) &&
-    (value.selectedGreetingId === null || UUID.test(value.selectedGreetingId || ""));
+  try { validateWebsiteProfile(value); return true; } catch { return false; }
 }
 function adoptOwner(result) {
   const value = result?.owner;
@@ -154,7 +152,8 @@ function adoptOwner(result) {
     throw new Error("The service did not return complete channel settings. Your current edits were kept.");
   if (result.enrollment !== null && result.enrollment !== undefined && !validEnrollment(result.enrollment)) throw new Error("The service returned an incomplete signup status.");
   owner = { channelId: value.channelId, channelName: value.channelName, profileRevision: value.profileRevision };
-  draft = structuredClone(value.profile); enrollment = result.enrollment || null; dirty = false; renderProfile(); showOwner();
+  draft = { ...structuredClone(value.profile), version: 2, lmStudio: structuredClone(value.profile.lmStudio || createDefaultWebsiteLm()) };
+  enrollment = result.enrollment || null; dirty = false; renderProfile(); showOwner();
 }
 function showOwner() {
   if (!owner || !draft) return;
@@ -238,11 +237,14 @@ function renderGreetingSelect() {
 }
 function updateCounts() {
   if (!draft) return;
+  $("lm-username-count").textContent = `${draft.lmStudio.usernameReplies.length} / 20`;
+  $("add-lm-username").disabled = profileBusy || draft.lmStudio.usernameReplies.length >= 20;
   for (const [kind, countId, buttonId] of [["greetings", "greeting-count", "add-greeting"], ["personalGreetings", "personal-count", "add-personal"], ["commands", "command-count", "add-command"]]) {
     $(countId).textContent = `${draft[kind].length} / 10`; $(buttonId).disabled = profileBusy || draft[kind].length >= 10;
   }
 }
 function renderProfile() {
+  renderLmSettings();
   $("greetings-enabled").checked = draft.greetingsEnabled; $("greeting-mode").value = draft.greetingMode;
   for (const kind of ["greetings", "personalGreetings", "commands"]) renderRows(kind);
   renderGreetingSelect(); updateCounts(); updateSaveState(); $("discard-confirmation").hidden = true;
@@ -268,8 +270,61 @@ function cleanDraft() {
   if (value.commands.some(row => !row.response || !/^![a-z0-9_-]{1,30}$/.test(row.name))) throw new Error("Give each command a !name of 1–30 letters, numbers, underscores, or hyphens, and a reply.");
   if (value.commands.some(row => RESERVED_COMMANDS.has(row.name))) throw new Error("Built-in command names are reserved. Choose a different name for your custom reply.");
   if ([...value.greetings.map(row => row.message), ...value.personalGreetings.flatMap(row => [row.username, row.message]), ...value.commands.map(row => row.response)].some(text => /[\u0000-\u001f\u007f]/.test(text))) throw new Error("Use a single line for each greeting and reply. Remove line breaks or other control characters before saving.");
-  return value;
+  return validateWebsiteProfile(value);
 }
+
+function styleSelect(value, onChange) {
+  const select = element("select");
+  for (const [key, title] of Object.entries(WEBSITE_LM_STYLES)) { const option = element("option", "", title); option.value = key; select.append(option); }
+  select.value = value; select.addEventListener("change", () => { onChange(select.value); markDirty(); }); return select;
+}
+function lmInstructions(value, onInput) {
+  const input = textMessage(value, onInput); input.maxLength = 1000; input.required = false;
+  input.placeholder = "For example: Keep replies short, talk about gaming, and avoid spoilers."; return input;
+}
+function lmCooldown(value, onInput) {
+  const input = element("input"); input.type = "number"; input.min = "10"; input.max = "3600"; input.step = "1"; input.required = true; input.value = String(value);
+  input.addEventListener("input", () => { onInput(input.value === "" ? NaN : Number(input.value)); markDirty(); }); return input;
+}
+function renderLmSettings() {
+  const lm = draft.lmStudio;
+  $("lm-enabled").checked = lm.enabled;
+  $("lm-command").value = lm.command;
+  $("lm-user-level").value = lm.userLevel;
+  $("lm-style-field").replaceChildren(field("Default reply style", "lm-style", styleSelect(lm.style, value => { lm.style = value; })));
+  $("lm-cooldown-field").replaceChildren(field("Per-viewer cooldown (seconds)", "lm-cooldown", lmCooldown(lm.cooldown, value => { lm.cooldown = value; })));
+  $("lm-instructions-field").replaceChildren(field("Your channel instructions (optional, up to 1000 characters)", "lm-instructions", lmInstructions(lm.instructions, value => { lm.instructions = value; })));
+  renderLmRules();
+}
+function renderLmRules() {
+  const list = $("lm-username-list"); list.replaceChildren();
+  const rules = draft.lmStudio.usernameReplies;
+  rules.forEach((rule, index) => {
+    const card = element("article", "profile-row");
+    const top = element("div", "profile-row-heading"); top.append(element("h3", "", `Username rule ${index + 1}`));
+    const actions = element("div", "profile-row-actions"), label = element("label", "check-label"), check = element("input");
+    check.type = "checkbox"; check.checked = rule.enabled; check.setAttribute("aria-label", `Enable username rule ${index + 1}`);
+    check.addEventListener("change", () => { rule.enabled = check.checked; markDirty(); }); label.append(check, document.createTextNode("Enabled"));
+    const remove = element("button", "remove-row", "Remove"); remove.type = "button"; remove.setAttribute("aria-label", `Remove username rule ${index + 1}`);
+    remove.addEventListener("click", () => { rules.splice(index, 1); renderLmRules(); updateCounts(); markDirty(); });
+    actions.append(label, remove); top.append(actions); card.append(top);
+    const grid = element("div", "profile-grid");
+    grid.append(field("Chat username", `lm-name-${index}`, inputText(rule.username, 100, value => { rule.username = value; }, "@username")),
+      field("Reply style", `lm-tone-${index}`, styleSelect(rule.style, value => { rule.style = value; })),
+      field("Cooldown (seconds)", `lm-wait-${index}`, lmCooldown(rule.cooldown, value => { rule.cooldown = value; })));
+    card.append(grid, field("Extra instructions for this person (optional)", `lm-notes-${index}`, lmInstructions(rule.instructions, value => { rule.instructions = value; })));
+    list.append(card);
+  });
+  if (!rules.length) list.append(element("p", "empty-list", "No automatic username replies. Viewers can still use your reply command when LM Studio is enabled."));
+}
+$("lm-enabled").addEventListener("change", event => { if (draft) { draft.lmStudio.enabled = event.target.checked; markDirty(); } });
+$("lm-command").addEventListener("input", event => { if (draft) { draft.lmStudio.command = event.target.value; markDirty(); } });
+$("lm-user-level").addEventListener("change", event => { if (draft) { draft.lmStudio.userLevel = event.target.value; markDirty(); } });
+$("add-lm-username").addEventListener("click", () => {
+  if (profileBusy || !draft || draft.lmStudio.usernameReplies.length >= 20) return;
+  draft.lmStudio.usernameReplies.push({ username: "", enabled: true, style: draft.lmStudio.style, cooldown: 60, instructions: "" });
+  renderLmRules(); updateCounts(); markDirty(); $("lm-username-list").lastElementChild.querySelector("input[type=text]")?.focus();
+});
 async function loadProfile() {
   if (!access || profileBusy) return;
   const generation = ownerGeneration, identity = access; clearOwnerMessages(); setProfileBusy(true);

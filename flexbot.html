@@ -8,8 +8,8 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://flexbot-channel-signup.mrflex420.chatgpt.site; base-uri 'none'; form-action 'none'">
   <title>Flexbot for your channel · The Lounge</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261030-update-info">
-  <script type="module" src="/assets/flexbot-signup.js?v=20261030-owner1"></script>
+  <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261031-lm1">
+  <script type="module" src="/assets/flexbot-signup.js?v=20261031-lm1"></script>
 </head>
 <body>
   <a class="skip-link" href="#signup">Skip to signup</a>
@@ -22,7 +22,7 @@
       <p class="eyebrow"><span class="signal" aria-hidden="true"></span> YOUR CHANNEL. YOUR INVITATION.</p>
       <h1>A familiar hello.<br><span>In your live chat.</span></h1>
       <p class="intro-copy">Invite Flexbot to your YouTube channel. Choose your time, write your own welcomes, and give your community commands that feel like you.</p>
-      <a class="update-jump" href="#latest-update">New: your own greetings, commands, and saved settings <span aria-hidden="true">↓</span></a>
+      <a class="update-jump" href="#latest-update">New: LM Studio replies, your way <span aria-hidden="true">↓</span></a>
     </div>
     <div id="signup-layout" class="signup-layout">
       <section class="signup-panel" aria-labelledby="form-title">
@@ -74,7 +74,7 @@
       <div class="owner-heading"><div><p class="eyebrow">YOUR PRIVATE CHANNEL SETTINGS</p><h2 id="owner-title">Your channel, your voice.</h2><a id="owner-channel" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"></a></div><button id="forget-access" class="button secondary" type="button">Forget access on this browser</button></div>
       <div class="owner-term"><div><strong id="owner-term-title"></strong><p id="owner-term-copy" class="help"></p></div><button id="renew" class="button secondary" type="button" hidden>Sign up again</button></div>
       <p class="help retained-note">Your greetings and commands stay saved after your signup expires. Renewing for the same verified channel brings them back. Only the admin can clear the stored profile.</p>
-      <nav class="profile-jump" aria-label="Channel settings sections"><a href="#welcome-settings">Welcome messages</a><a href="#personal-settings">Personal greetings</a><a href="#command-settings">Custom commands</a><a href="#settings-save">Save settings ↓</a></nav>
+      <nav class="profile-jump" aria-label="Channel settings sections"><a href="#welcome-settings">Welcome messages</a><a href="#personal-settings">Personal greetings</a><a href="#command-settings">Custom commands</a><a href="#lm-settings">LM Studio replies</a><a href="#settings-save">Save settings ↓</a></nav>
       <p id="owner-notice" class="notice" role="status" aria-live="polite" hidden></p><p id="owner-error" class="error" role="alert" hidden></p>
       <div id="discard-confirmation" class="discard-confirmation" hidden><p>Load the saved settings and discard your unsaved edits?</p><div><button id="discard-confirm" class="button secondary" type="button">Discard edits and load</button><button id="discard-cancel" class="text-button" type="button">Keep editing</button></div></div>
       <form id="profile-form">
@@ -85,13 +85,30 @@
         </fieldset>
         <fieldset id="personal-settings" class="profile-section"><legend>Personal greetings <span id="personal-count" class="item-count">0 / 10</span></legend><p class="section-copy">Give specific people their own welcome using <code>@username</code>. A matching personal greeting replaces their general welcome, once per day in your channel. Matching ignores letter case and a leading @.</p><div id="personal-list" class="profile-list"></div><button id="add-personal" class="button secondary add-row" type="button">＋ Add personal greeting</button></fieldset>
         <fieldset id="command-settings" class="profile-section"><legend>Your custom commands <span id="command-count" class="item-count">0 / 10</span></legend><p class="section-copy">Choose a command and the text Flexbot replies with. Everyone in your chat can use enabled custom commands. Built-in commands keep the admin’s permissions and cannot be replaced here.</p><p class="help">Use <code>{user}</code>, <code>{channel}</code>, or <code>{query}</code> in a reply. Command names use 1–30 letters, numbers, underscores, or hyphens after <code>!</code>.</p><div id="command-list" class="profile-list"></div><button id="add-command" class="button secondary add-row" type="button">＋ Add command</button></fieldset>
-        <div id="settings-save" class="profile-save"><div><strong id="save-state" role="status" aria-live="polite">All changes saved</strong><p class="help">Saved changes apply when Flexbot next syncs your active channel. Channel permissions, cooldowns, and Blocked Users still apply.</p></div><button id="save-profile" class="button primary" type="submit">Save my settings</button><button id="reload-profile" class="button secondary" type="button">Load saved settings</button></div>
+        <fieldset id="lm-settings" class="profile-section"><legend>LM Studio replies</legend>
+          <p class="section-copy">Give the bot a voice that fits your channel. Choose a reply command, tone, and instructions. Flexbot uses the admin’s connected model, so you don’t need to install LM Studio yourself. These preferences apply only in your chat.</p>
+          <label class="check-label section-toggle"><input id="lm-enabled" type="checkbox">Enable LM Studio replies in my channel</label>
+          <div class="profile-grid">
+            <label class="profile-field" for="lm-command"><span>Chat command</span><input id="lm-command" type="text" maxlength="31" pattern="![A-Za-z0-9_\-]{1,30}" placeholder="!askflex" required></label>
+            <label class="profile-field" for="lm-user-level"><span>Who can use the command</span><select id="lm-user-level"><option value="everyone">Everyone</option><option value="regular">Regulars and moderators</option><option value="moderator">Moderators and channel owner</option><option value="owner">Channel owner only</option></select></label>
+            <div id="lm-style-field"></div><div id="lm-cooldown-field"></div>
+          </div>
+          <div id="lm-instructions-field"></div>
+          <p class="help">Viewers type your command followed by a question. Cooldowns are 10–3600 seconds per viewer. Regulars are managed by the admin.</p>
+          <h3 class="lm-rules-heading">Reply to specific usernames <span id="lm-username-count" class="item-count">0 / 20</span></h3>
+          <p class="section-copy">No command needed: reply to a listed viewer’s new messages in your chat. Each person can have a different style, cooldown, and extra instructions. Matching ignores letter case and a leading @.</p>
+          <div id="lm-username-list" class="profile-list"></div><button id="add-lm-username" class="button secondary add-row" type="button">＋ Add username reply</button>
+          <p class="help">Replies start after you enable this option and save. Your signup must be active and the bot’s model online. The admin’s LM Studio switch, blocked words, and Blocked Users always apply. Automatic username replies also need Personal messages enabled for your channel. Your preferences stay saved after expiry.</p>
+        </fieldset>
+        <div id="settings-save" class="profile-save"><div><strong id="save-state" role="status" aria-live="polite">All changes saved</strong><p class="help">Saved changes apply when Flexbot next syncs your active channel. Channel permissions, cooldowns, blocked words, and Blocked Users still apply.</p></div><button id="save-profile" class="button primary" type="submit">Save my settings</button><button id="reload-profile" class="button secondary" type="button">Load saved settings</button></div>
       </form>
     </section>
     <section id="latest-update" class="latest-update" aria-labelledby="update-title">
-      <div class="update-heading"><div><p class="eyebrow">LATEST FLEXBOT UPDATE</p><h2 id="update-title">Your channel. Your settings.</h2></div><time datetime="2026-10-30">October 30, 2026</time></div>
-      <p class="update-intro">Channel owners can now manage their own greetings and commands right here, after verifying their YouTube channel.</p>
+      <div class="update-heading"><div><p class="eyebrow">LATEST FLEXBOT UPDATE</p><h2 id="update-title">Your channel. Your bot’s voice.</h2></div><time datetime="2026-10-31">October 31, 2026</time></div>
+      <p class="update-intro">Verified channel owners can now customize LM Studio replies alongside their greetings and commands. Open Manage my channel, choose LM Studio replies, and save your preferences.</p>
       <div class="update-features">
+        <article><span class="feature-label">LM STUDIO REPLIES</span><h3>Choose your bot’s personality</h3><p>Turn AI replies on or off, choose a command, set who can ask, and pick a style from helpful to sarcastic or a savage roast. Add your own channel instructions and per-viewer cooldown.</p></article>
+        <article><span class="feature-label">AUTOMATIC USERNAME REPLIES</span><h3>A different style for each person</h3><p>Add up to 20 usernames with individual styles, instructions, and cooldowns. They only apply in your channel. The admin runs the model and keeps blocked words and channel permissions in effect.</p></article>
         <article><span class="feature-label">WELCOME MESSAGES</span><h3>Up to 10 greetings</h3><p>Write your own welcome messages. Pick one specific greeting or let Flexbot randomly choose from the greetings you enable.</p></article>
         <article><span class="feature-label">PERSONAL GREETINGS</span><h3>A hello for @username</h3><p>Save up to 10 personal greetings for specific people. Their personal message replaces the general welcome, once per day in your channel.</p></article>
         <article><span class="feature-label">CUSTOM COMMANDS</span><h3>Up to 10 commands</h3><p>Create commands such as <code>!socials</code>, write the replies, and set their cooldowns. You can enable or disable each command. Existing built-in commands keep their admin settings.</p></article>
