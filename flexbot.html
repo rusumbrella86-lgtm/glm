@@ -9,7 +9,7 @@
   <title>Flexbot for your channel · The Lounge</title>
   <link rel="icon" href="/favicon.svg">
   <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261031-lm1">
-  <script type="module" src="/assets/flexbot-signup.js?v=20261031-lm1"></script>
+  <script type="module" src="/assets/flexbot-signup.js?v=20261101-greetings"></script>
 </head>
 <body>
   <a class="skip-link" href="#signup">Skip to signup</a>
@@ -78,7 +78,7 @@
       <p id="owner-notice" class="notice" role="status" aria-live="polite" hidden></p><p id="owner-error" class="error" role="alert" hidden></p>
       <div id="discard-confirmation" class="discard-confirmation" hidden><p>Load the saved settings and discard your unsaved edits?</p><div><button id="discard-confirm" class="button secondary" type="button">Discard edits and load</button><button id="discard-cancel" class="text-button" type="button">Keep editing</button></div></div>
       <form id="profile-form">
-        <fieldset id="welcome-settings" class="profile-section"><legend>Your welcome messages <span id="greeting-count" class="item-count">0 / 10</span></legend><p class="section-copy">Write up to 10 greetings. Use <code>{user}</code> for the viewer’s name and <code>{channel}</code> for your channel.</p>
+        <fieldset id="welcome-settings" class="profile-section"><legend>Your welcome messages <span id="greeting-count" class="item-count">0 / 10</span></legend><p class="section-copy">New channels start with 10 welcoming greetings. Edit, replace, disable, or delete any message to make it your own. Use <code>{user}</code> for the viewer’s name and <code>{channel}</code> for your channel.</p>
           <label class="check-label section-toggle"><input id="greetings-enabled" type="checkbox">Enable general greetings</label>
           <div class="profile-grid"><label for="greeting-mode">Greeting selection<select id="greeting-mode"><option value="fixed">Use one specific greeting</option><option value="random">Randomize enabled greetings</option></select></label><label id="selected-greeting-label" for="selected-greeting">Specific greeting<select id="selected-greeting"></select></label></div>
           <p id="greeting-mode-help" class="help"></p><div id="greeting-list" class="profile-list"></div><button id="add-greeting" class="button secondary add-row" type="button">＋ Add greeting</button>

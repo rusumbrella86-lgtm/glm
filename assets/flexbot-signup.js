@@ -1,4 +1,4 @@
-import { createDefaultWebsiteLm, validateWebsiteProfile, WEBSITE_LM_STYLES } from "./flexbot-profile.js?v=20261031-lm1";
+import { createDefaultWebsiteLm, validateWebsiteProfile, WEBSITE_LM_STYLES } from "./flexbot-profile.js?v=20261101-greetings";
 
 const API = "https://flexbot-channel-signup.mrflex420.chatgpt.site";
 const STORAGE_KEY = "glm.flexbot.signup.v1";

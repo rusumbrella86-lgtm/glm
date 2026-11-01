@@ -6,6 +6,19 @@ export const WEBSITE_RESERVED_COMMANDS = Object.freeze([
 ]);
 const UUID = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 const DEFAULT_GREETING_ID = "00000000-0000-4000-8000-000000000101";
+// Starter text is copied into each profile so owners can edit or remove it freely.
+export const DEFAULT_DAILY_GREETINGS = Object.freeze([
+  "Hey {user}, welcome in! Good to see you in chat 💙",
+  "Hello {user}! Pull up a seat and enjoy the stream. 👋",
+  "Welcome to {channel}, {user}! Hope your day is going well. ☀️",
+  "Glad you could join us, {user}! Make yourself at home. 🏡",
+  "Hey {user}! Thanks for spending a little of your day with us. ✨",
+  "A warm welcome to you, {user}! Let's enjoy the stream together. 💛",
+  "Hi {user}! Whether you're chatting or just watching, you're welcome here. 😊",
+  "Welcome in, {user}! Here's to good conversation and a few laughs. 🎉",
+  "Great to see you, {user}! Settle in and enjoy some time with {channel}. 🌟",
+  "Hello and welcome, {user}! Thanks for being part of today's chat. 🙌",
+]);
 const usernameKey = value => value.normalize("NFKC").trim().replace(/^@/, "").trim().replace(/\s+/gu, " ").toLowerCase();
 
 export const WEBSITE_LM_STYLES = Object.freeze({
@@ -51,8 +64,10 @@ export function validateWebsiteLm(input, commands = []) {
 }
 
 export function createDefaultWebsiteProfile() {
-  return { version: 2, greetingsEnabled: true, greetingMode: "fixed",
-    greetings: [{ id: DEFAULT_GREETING_ID, message: "Hey {user}, welcome to {channel}!", enabled: true }],
+  return { version: 2, greetingsEnabled: true, greetingMode: "random",
+    greetings: DEFAULT_DAILY_GREETINGS.map((message, index) => ({
+      id: `00000000-0000-4000-8000-${String(101 + index).padStart(12, "0")}`, message, enabled: true,
+    })),
     selectedGreetingId: DEFAULT_GREETING_ID, personalGreetings: [], commands: [], lmStudio: createDefaultWebsiteLm() };
 }
 
