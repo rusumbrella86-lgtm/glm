@@ -63,3 +63,5 @@ artist credits are included in data/sources.json and the card viewer. Public
 republication rights for the full archive have not been established.
 Astro Powder and its engine are GPL-3.0; corresponding source and licenses are
 included. Geist fonts use the included SIL Open Font License.
+
+LM Studio preferences support up to 10 command names per verified channel. Names share the channel tone, instructions, permissions and per-viewer cooldown; duplicate names, built-ins and custom text command conflicts are rejected. Existing single-command profiles remain compatible.

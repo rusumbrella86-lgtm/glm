@@ -9,7 +9,7 @@
   <title>Flexbot for your channel · The Lounge</title>
   <link rel="icon" href="/favicon.svg">
   <link rel="stylesheet" href="/assets/flexbot-signup.css?v=20261031-lm1">
-  <script type="module" src="/assets/flexbot-signup.js?v=20261101-greetings"></script>
+  <script type="module" src="/assets/flexbot-signup.js?v=20261104-commands"></script>
 </head>
 <body>
   <a class="skip-link" href="#signup">Skip to signup</a>
@@ -86,15 +86,15 @@
         <fieldset id="personal-settings" class="profile-section"><legend>Personal greetings <span id="personal-count" class="item-count">0 / 10</span></legend><p class="section-copy">Give specific people their own welcome using <code>@username</code>. A matching personal greeting replaces their general welcome, once per day in your channel. Matching ignores letter case and a leading @.</p><div id="personal-list" class="profile-list"></div><button id="add-personal" class="button secondary add-row" type="button">＋ Add personal greeting</button></fieldset>
         <fieldset id="command-settings" class="profile-section"><legend>Your custom commands <span id="command-count" class="item-count">0 / 10</span></legend><p class="section-copy">Choose a command and the text Flexbot replies with. Everyone in your chat can use enabled custom commands. Built-in commands keep the admin’s permissions and cannot be replaced here.</p><p class="help">Use <code>{user}</code>, <code>{channel}</code>, or <code>{query}</code> in a reply. Command names use 1–30 letters, numbers, underscores, or hyphens after <code>!</code>.</p><div id="command-list" class="profile-list"></div><button id="add-command" class="button secondary add-row" type="button">＋ Add command</button></fieldset>
         <fieldset id="lm-settings" class="profile-section"><legend>LM Studio replies</legend>
-          <p class="section-copy">Give the bot a voice that fits your channel. Choose a reply command, tone, and instructions. Flexbot uses the admin’s connected model, so you don’t need to install LM Studio yourself. These preferences apply only in your chat.</p>
+          <p class="section-copy">Give the bot a voice that fits your channel. Choose up to 10 reply commands, a tone, and instructions. Flexbot uses the admin’s connected model, so you don’t need to install LM Studio yourself. These preferences apply only in your chat.</p>
           <label class="check-label section-toggle"><input id="lm-enabled" type="checkbox">Enable LM Studio replies in my channel</label>
           <div class="profile-grid">
-            <label class="profile-field" for="lm-command"><span>Chat command</span><input id="lm-command" type="text" maxlength="31" pattern="![A-Za-z0-9_\-]{1,30}" placeholder="!askflex" required></label>
-            <label class="profile-field" for="lm-user-level"><span>Who can use the command</span><select id="lm-user-level"><option value="everyone">Everyone</option><option value="regular">Regulars and moderators</option><option value="moderator">Moderators and channel owner</option><option value="owner">Channel owner only</option></select></label>
+            <div><h3>LM Studio chat commands <span id="lm-command-count" class="item-count">1 / 10</span></h3><div id="lm-command-list" class="profile-list"></div><button id="add-lm-command" type="button" class="button secondary add-row">＋ Add LM command</button></div>
+            <label class="profile-field" for="lm-user-level"><span>Who can use these commands</span><select id="lm-user-level"><option value="everyone">Everyone</option><option value="regular">Regulars and moderators</option><option value="moderator">Moderators and channel owner</option><option value="owner">Channel owner only</option></select></label>
             <div id="lm-style-field"></div><div id="lm-cooldown-field"></div>
           </div>
           <div id="lm-instructions-field"></div>
-          <p class="help">Viewers type your command followed by a question. Cooldowns are 10–3600 seconds per viewer. Regulars are managed by the admin.</p>
+          <p class="help">Viewers type any of your commands followed by a question. All commands share your reply settings and cooldown. Cooldowns are 10–3600 seconds per viewer. Regulars are managed by the admin.</p>
           <h3 class="lm-rules-heading">Reply to specific usernames <span id="lm-username-count" class="item-count">0 / 20</span></h3>
           <p class="section-copy">No command needed: reply to a listed viewer’s new messages in your chat. Each person can have a different style, cooldown, and extra instructions. Matching ignores letter case and a leading @.</p>
           <div id="lm-username-list" class="profile-list"></div><button id="add-lm-username" class="button secondary add-row" type="button">＋ Add username reply</button>

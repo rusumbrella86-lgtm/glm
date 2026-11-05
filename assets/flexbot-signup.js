@@ -1,4 +1,4 @@
-import { createDefaultWebsiteLm, validateWebsiteProfile, WEBSITE_LM_STYLES } from "./flexbot-profile.js?v=20261101-greetings";
+import { createDefaultWebsiteLm, validateWebsiteProfile, WEBSITE_LM_STYLES } from "./flexbot-profile.js?v=20261104-commands";
 
 const API = "https://flexbot-channel-signup.mrflex420.chatgpt.site";
 const STORAGE_KEY = "glm.flexbot.signup.v1";
@@ -176,7 +176,7 @@ function setProfileBusy(value) {
   for (const control of $("profile-form").querySelectorAll("input,select,textarea,button")) control.disabled = value;
   $("forget-access").disabled = value; $("renew").disabled = value;
   for (const id of ["continue", "verify", "start-over", "another-channel", "manage-continue", "signup-mode", "manage-mode", "open-saved"]) $(id).disabled = value || busy;
-  if (!value) updateCounts(); updateSaveState();
+  if (!value) { if (draft) renderLmCommands(); updateCounts(); } updateSaveState();
 }
 function field(labelText, id, input) { const label = element("label", "profile-field"); label.htmlFor = id; label.append(element("span", "", labelText)); input.id = id; label.append(input); return label; }
 function inputText(value, maxLength, onInput, placeholder = "") {
@@ -286,10 +286,28 @@ function lmCooldown(value, onInput) {
   const input = element("input"); input.type = "number"; input.min = "10"; input.max = "3600"; input.step = "1"; input.required = true; input.value = String(value);
   input.addEventListener("input", () => { onInput(input.value === "" ? NaN : Number(input.value)); markDirty(); }); return input;
 }
+function renderLmCommands() {
+  const lm = draft.lmStudio;
+  if (!Array.isArray(lm.commands)) lm.commands = [lm.command || "!askflex"];
+  const list = $("lm-command-list"); list.replaceChildren();
+  $("lm-command-count").textContent = `${lm.commands.length} / 10`;
+  $("add-lm-command").disabled = profileBusy || lm.commands.length >= 10;
+  lm.commands.forEach((name, index) => {
+    const row = element("div", "profile-row");
+    row.append(field(`Chat command ${index + 1}`, `lm-command-${index}`, inputText(name, 31, value => {
+      lm.commands[index] = value; lm.command = lm.commands[0];
+    }, index ? "!askbot" : "!askflex")));
+    const remove = element("button", "remove-row", "Remove command"); remove.type = "button";
+    remove.disabled = profileBusy || lm.commands.length === 1;
+    remove.setAttribute("aria-label", `Remove chat command ${index + 1}`);
+    remove.addEventListener("click", () => { lm.commands.splice(index, 1); lm.command = lm.commands[0]; renderLmCommands(); markDirty(); });
+    row.append(remove); list.append(row);
+  });
+}
 function renderLmSettings() {
   const lm = draft.lmStudio;
   $("lm-enabled").checked = lm.enabled;
-  $("lm-command").value = lm.command;
+  renderLmCommands();
   $("lm-user-level").value = lm.userLevel;
   $("lm-style-field").replaceChildren(field("Default reply style", "lm-style", styleSelect(lm.style, value => { lm.style = value; })));
   $("lm-cooldown-field").replaceChildren(field("Per-viewer cooldown (seconds)", "lm-cooldown", lmCooldown(lm.cooldown, value => { lm.cooldown = value; })));
@@ -318,7 +336,11 @@ function renderLmRules() {
   if (!rules.length) list.append(element("p", "empty-list", "No automatic username replies. Viewers can still use your reply command when LM Studio is enabled."));
 }
 $("lm-enabled").addEventListener("change", event => { if (draft) { draft.lmStudio.enabled = event.target.checked; markDirty(); } });
-$("lm-command").addEventListener("input", event => { if (draft) { draft.lmStudio.command = event.target.value; markDirty(); } });
+$("add-lm-command").addEventListener("click", () => {
+  if (profileBusy || !draft || draft.lmStudio.commands.length >= 10) return;
+  draft.lmStudio.commands.push(""); renderLmCommands(); markDirty();
+  $("lm-command-list").lastElementChild.querySelector("input")?.focus();
+});
 $("lm-user-level").addEventListener("change", event => { if (draft) { draft.lmStudio.userLevel = event.target.value; markDirty(); } });
 $("add-lm-username").addEventListener("click", () => {
   if (profileBusy || !draft || draft.lmStudio.usernameReplies.length >= 20) return;

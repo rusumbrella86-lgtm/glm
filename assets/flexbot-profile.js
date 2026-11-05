@@ -1,7 +1,8 @@
+import { normalizeLmCommands } from "./flexbot-lm-commands.js?v=20261104-commands";
 // Shared, dependency-free contract for verified website channel owners.
 export const WEBSITE_PROFILE_LIMITS = Object.freeze({ greetings: 10, personalGreetings: 10, commands: 10, message: 200, username: 100 });
 export const WEBSITE_RESERVED_COMMANDS = Object.freeze([
-  "!commands", "!uptime", "!hello", "!8ball", "!dice", "!enter", "!vote", "!song", "!songs",
+  "!quiet", "!commands", "!uptime", "!hello", "!8ball", "!dice", "!enter", "!vote", "!song", "!songs",
   "!queue", "!weather", "!image", "!mage", "!pause", "!play", "!resume", "!stop", "!skip",
 ]);
 const UUID = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
@@ -44,11 +45,12 @@ export function validateWebsiteLm(input, commands = []) {
     if (typeof value.instructions !== "string" || value.instructions.length > 1000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value.instructions)) throw new Error("LM Studio instructions must be 1000 characters or fewer, without control characters.");
     return { enabled: value.enabled, style: value.style, cooldown: value.cooldown, instructions: value.instructions.trim() };
   };
-  exact(input, ["enabled", "command", "style", "instructions", "userLevel", "cooldown", "usernameReplies"]);
+  exact(input, ["enabled", "command", "style", "instructions", "userLevel", "cooldown", "usernameReplies", ...(Object.hasOwn(input || {}, "commands") ? ["commands"] : [])]);
   const common = preferences(input);
-  const command = typeof input.command === "string" ? input.command.trim().toLowerCase() : "";
-  if (!/^![a-z0-9_-]{1,30}$/.test(command) || WEBSITE_RESERVED_COMMANDS.includes(command) || commands.some(row => row.name === command))
-    throw new Error("Choose a unique LM Studio !command that is not a built-in or one of your custom commands.");
+  const aliases = normalizeLmCommands(Object.hasOwn(input, "commands") ? input.commands : [input.command]);
+  for (const command of aliases) if (WEBSITE_RESERVED_COMMANDS.includes(command) || commands.some(row => row.name === command))
+    throw new Error(`${command} is reserved or already used by a custom command. Choose another LM Studio command.`);
+  const command = aliases[0];
   if (!["everyone", "regular", "moderator", "owner"].includes(input.userLevel)) throw new Error("Choose who can use your LM Studio command.");
   if (!Array.isArray(input.usernameReplies) || input.usernameReplies.length > 20) throw new Error("Use up to 20 LM Studio username rules.");
   const names = new Set();
@@ -60,7 +62,7 @@ export function validateWebsiteLm(input, commands = []) {
     names.add(name);
     return { username: row.username.trim(), ...preferences(row) };
   });
-  return { ...common, command, userLevel: input.userLevel, usernameReplies };
+  return { ...common, command, ...(Object.hasOwn(input, "commands") && { commands: aliases }), userLevel: input.userLevel, usernameReplies };
 }
 
 export function createDefaultWebsiteProfile() {
